@@ -11,28 +11,46 @@ namespace EternalStorm;
 
 public class EternalStormModSystem : ModSystem
 {
-    private ICoreServerAPI sapi;
+    public static string ConfigName = "EternalStormModConfig.json";
+
+    private ICoreAPI api;
     private EternalStormModConfig config;
 
-    public override void StartServerSide(ICoreServerAPI api)
+    public override void Start(ICoreAPI api)
     {
-        sapi = api;
+        this.api = api;
+        config = api.LoadModConfig<EternalStormModConfig>(ConfigName) ?? EternalStormModConfig.GetDefault(api);
 
-        config = sapi.LoadModConfig<EternalStormModConfig>("EternalStormModConfig.json") ?? EternalStormModConfig.GetDefault(sapi);
+        api.World.RegisterCallback(_ =>
+        {
+            var sys = api.ModLoader.GetModSystem<SystemTemporalStability>();
+            sys.OnGetTemporalStability -= ForceBorderStability;
+            sys.OnGetTemporalStability += ForceBorderStability;
+        }, 0);
+    }
 
-        Mod.Logger.Notification("Hello from template mod server side: " + Lang.Get("eternalstorm:hello"));
+    private float ForceBorderStability(float baseStab, double x, double y, double z)
+    {
+        double dx = x - api.World.DefaultSpawnPosition.X;
+        double dz = z - api.World.DefaultSpawnPosition.Z;
+        double dist = Math.Sqrt(dx * dx + dz * dz);
 
-        api.World.RegisterGameTickListener(UpdateServer, 200);
+        if (dist <= config.BorderStart) return baseStab;
+        if (dist >= config.BorderEnd) return 0f;
+
+        float t = (float)((dist - config.BorderStart) / (config.BorderEnd - config.BorderStart));
+        
+        return GameMath.Lerp(baseStab, 0f, t);
     }
 
     private void UpdateServer(float delta)
     {
-        foreach (var player in sapi.World.AllOnlinePlayers)
+        foreach (var player in api.World.AllOnlinePlayers)
         {
             var pos = player.Entity.ServerPos;
 
-            double relX = pos.X - sapi.World.DefaultSpawnPosition.X;
-            double relZ = pos.Z - sapi.World.DefaultSpawnPosition.Z;
+            double relX = pos.X - api.World.DefaultSpawnPosition.X;
+            double relZ = pos.Z - api.World.DefaultSpawnPosition.Z;
             double distance = Math.Sqrt(relX * relX + relZ * relZ);
 
             var beStability = player.Entity.GetBehavior<EntityBehaviorTemporalStabilityAffected>();
@@ -45,13 +63,16 @@ public class EternalStormModSystem : ModSystem
             float minDrainRate = 1f / config.MinStabilityDrainSeconds;
             float maxDrainRate = 1f / config.MaxStabilityDrainSeconds;
             float drain = maxDrainRate * delta;
-            if (distance < config.BorderEnd) {
+            if (distance < config.BorderEnd)
+            {
                 float intensity = GameMath.Clamp((float)((distance - config.BorderStart) / (config.BorderEnd - config.BorderStart)), 0f, 1f);
                 float lerpedDrainRate = GameMath.Lerp(minDrainRate, maxDrainRate, intensity);
                 drain = lerpedDrainRate * delta;
             }
 
-            beStability.OwnStability = GameMath.Clamp(beStability.OwnStability - drain, 0.0, 1.0);
+            double newStability = GameMath.Clamp(beStability.OwnStability - drain, 0.0, 1.0);
+            beStability.OwnStability = newStability;
+            player.Entity.WatchedAttributes.SetDouble("temporalStability", newStability);
         }
     }
 }
@@ -67,7 +88,7 @@ public class EternalStormModConfig
     public static EternalStormModConfig GetDefault(ICoreAPI api)
     {
         var cfg = new EternalStormModConfig();
-        api.StoreModConfig(cfg, "EternalStormModConfig.json");
+        api.StoreModConfig(cfg, EternalStormModSystem.ConfigName);
         return cfg;
     }
 }
