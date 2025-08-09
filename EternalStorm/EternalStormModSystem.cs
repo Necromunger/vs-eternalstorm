@@ -1,8 +1,9 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
-using Vintagestory.API.Client;
+using System.Reflection.Emit;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
@@ -11,15 +12,26 @@ namespace EternalStorm;
 
 public class EternalStormModSystem : ModSystem
 {
-    public static string ConfigName = "EternalStormModConfig.json";
+    public static string ConfigName = "EternalStormConfig.json";
 
     private ICoreAPI api;
-    private EternalStormModConfig config;
+
+    internal EternalStormModConfig config;
+    internal static EternalStormModSystem instance;
+
+    // Properties to access config values
+    internal static double StabilityPerGear => instance?.config?.StabilityPerGear ?? 0.30;
+    internal static float DamageOnGearUse => instance?.config?.DamageOnGearUse ?? 2f;
+    internal static float LowStabilityDamage => instance?.config?.LowStabilityDamage ?? 2f;
 
     public override void Start(ICoreAPI api)
     {
+        instance = this;
+
         this.api = api;
         config = api.LoadModConfig<EternalStormModConfig>(ConfigName) ?? EternalStormModConfig.GetDefault(api);
+
+        new Harmony(Mod.Info.ModID).PatchAll();
 
         api.World.RegisterCallback(_ =>
         {
@@ -27,6 +39,11 @@ public class EternalStormModSystem : ModSystem
             sys.OnGetTemporalStability -= ForceBorderStability;
             sys.OnGetTemporalStability += ForceBorderStability;
         }, 0);
+    }
+
+    public override void StartServerSide(ICoreServerAPI api)
+    {
+        AddStabilityCommand();
     }
 
     private float ForceBorderStability(float baseStab, double x, double y, double z)
@@ -39,51 +56,107 @@ public class EternalStormModSystem : ModSystem
         if (dist >= config.BorderEnd) return 0f;
 
         float t = (float)((dist - config.BorderStart) / (config.BorderEnd - config.BorderStart));
-        
+
         return GameMath.Lerp(baseStab, 0f, t);
     }
 
-    private void UpdateServer(float delta)
+    private void AddStabilityCommand()
     {
-        foreach (var player in api.World.AllOnlinePlayers)
-        {
-            var pos = player.Entity.ServerPos;
-
-            double relX = pos.X - api.World.DefaultSpawnPosition.X;
-            double relZ = pos.Z - api.World.DefaultSpawnPosition.Z;
-            double distance = Math.Sqrt(relX * relX + relZ * relZ);
-
-            var beStability = player.Entity.GetBehavior<EntityBehaviorTemporalStabilityAffected>();
-            if (beStability == null) continue;
-
-            if (distance < config.BorderStart)
-                continue;
-
-            // Convert seconds to drain per second (1/seconds)
-            float minDrainRate = 1f / config.MinStabilityDrainSeconds;
-            float maxDrainRate = 1f / config.MaxStabilityDrainSeconds;
-            float drain = maxDrainRate * delta;
-            if (distance < config.BorderEnd)
+        api.ChatCommands
+            .GetOrCreate("player")
+            .BeginSubCommands("sanity")
+            .WithDescription("Updates player sanity")
+            .RequiresPrivilege(Privilege.controlserver)
+            .WithArgs(api.ChatCommands.Parsers.OnlinePlayer("target"))
+            .WithArgs(api.ChatCommands.Parsers.Double("amount"))
+            .HandleWith(args =>
             {
-                float intensity = GameMath.Clamp((float)((distance - config.BorderStart) / (config.BorderEnd - config.BorderStart)), 0f, 1f);
-                float lerpedDrainRate = GameMath.Lerp(minDrainRate, maxDrainRate, intensity);
-                drain = lerpedDrainRate * delta;
+                var playerArg = args.Parsers[0] as PlayersArgParser;
+                var players = args.Parsers[0].GetValue() as PlayerUidName[];
+                if (players.Length == 0)
+                    return TextCommandResult.Error("Target player not found or not online.");
+
+                var playerUidName = players[0];
+
+                var player = api.World.PlayerByUid(playerUidName.Uid);
+                if (player == null)
+                    return TextCommandResult.Error("Target player not found or not online.");
+
+                var amount = (double)args.Parsers[1].GetValue();
+
+                var be = player.Entity.GetBehavior<EntityBehaviorTemporalStabilityAffected>();
+                if (be == null) return TextCommandResult.Error("Player has no temporal-stability behavior.");
+
+                be.OwnStability = GameMath.Clamp(amount, 0.0, 1.0);
+                player.Entity.WatchedAttributes.SetDouble("temporalStability", be.OwnStability);
+                player.Entity.WatchedAttributes.MarkAllDirty();
+
+                return TextCommandResult.Success($"Set {player.PlayerName}'s stability to {be.OwnStability:P0}.");
+            });
+    }
+
+    [HarmonyPatch(typeof(ItemKnife)), HarmonyPatch("OnHeldInteractStep")]
+    class Patch_ItemKnife_Transpile
+    {
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> ins)
+        {
+            var code = new List<CodeInstruction>(ins);
+
+            var addStab = AccessTools.Method(typeof(EntityBehaviorTemporalStabilityAffected), "AddStability", new[] { typeof(double) });
+            var recvDmg = AccessTools.Method(typeof(EntityAgent), "ReceiveDamage", new[] { typeof(DamageSource), typeof(float) });
+            var getStab = AccessTools.PropertyGetter(typeof(EternalStormModSystem), nameof(StabilityPerGear));
+            var getDmg = AccessTools.PropertyGetter(typeof(EternalStormModSystem), nameof(DamageOnGearUse));
+
+            for (int i = 0; i < code.Count - 1; i++)
+            {
+                // Replace constant before AddStability
+                if (code[i + 1].Calls(addStab))
+                    code[i] = new CodeInstruction(OpCodes.Call, getStab);
+
+                // Replace constant before ReceiveDamage
+                if (code[i + 1].Calls(recvDmg))
+                    code[i] = new CodeInstruction(OpCodes.Call, getDmg);
             }
 
-            double newStability = GameMath.Clamp(beStability.OwnStability - drain, 0.0, 1.0);
-            beStability.OwnStability = newStability;
-            player.Entity.WatchedAttributes.SetDouble("temporalStability", newStability);
+            return code;
+        }
+    }
+
+    public static bool ReceiveDamageShim(Entity ent, DamageSource src, float _)
+    {
+        return ent.ReceiveDamage(src, LowStabilityDamage);
+    }
+
+    [HarmonyPatch(typeof(EntityBehaviorTemporalStabilityAffected), "OnGameTick")]
+    static class Patch_LowStab_DamageSwap
+    {
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> ins)
+        {
+            var code = new List<CodeInstruction>(ins);
+            var recv = AccessTools.Method(typeof(Entity), nameof(Entity.ReceiveDamage), new[] { typeof(DamageSource), typeof(float) });
+            var shim = AccessTools.Method(typeof(EternalStormModSystem), nameof(ReceiveDamageShim));
+
+            for (int i = 0; i < code.Count; i++)
+            {
+                if (code[i].Calls(recv))
+                {
+                    code[i].opcode = OpCodes.Call;
+                    code[i].operand = shim;
+                    break;
+                }
+            }
+            return code;
         }
     }
 }
 
 public class EternalStormModConfig
 {
+    public float LowStabilityDamage = 0f;
+    public double StabilityPerGear = 1.0f;
+    public float DamageOnGearUse = 0f;
     public int BorderStart = 30;
     public int BorderEnd = 50;
-    // Duration in seconds to drain from 1 to 0
-    public float MinStabilityDrainSeconds = 300f;
-    public float MaxStabilityDrainSeconds = 150f;
 
     public static EternalStormModConfig GetDefault(ICoreAPI api)
     {
