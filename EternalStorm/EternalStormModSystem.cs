@@ -7,6 +7,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
+using Vintagestory.ServerMods;
 
 namespace EternalStorm;
 
@@ -146,6 +147,36 @@ public class EternalStormModSystem : ModSystem
                 }
             }
             return code;
+        }
+    }
+
+    [HarmonyPatch(typeof(WorldGenStructure), "TryGenerateAtSurface")]
+    class Patch_BetterRuins_RadiusGate
+    {
+        static bool Prefix(
+            WorldGenStructure __instance,
+            IBlockAccessor blockAccessor,
+            IWorldAccessor worldForCollectibleResolve,
+            BlockPos startPos,
+            string locationCode,
+            ref bool __result
+        )
+        {
+            if (instance.api.World.DefaultSpawnPosition == null)
+                return true;
+
+            // Block all structures with name ruin within border 
+            double dx = startPos.X - instance.api.World.DefaultSpawnPosition.X;
+            double dz = startPos.Z - instance.api.World.DefaultSpawnPosition.Z;
+            double dist = Math.Sqrt(dx * dx + dz * dz);
+
+            if (dist < instance.config.BorderStart)
+            {
+                __result = false; // Don't generate the structure
+                return false;
+            }
+
+            return true;
         }
     }
 }
