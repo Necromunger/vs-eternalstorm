@@ -96,6 +96,22 @@ public class EternalStormModSystem : ModSystem
             });
     }
 
+    public static bool IsOutsideBorderStart(BlockPos pos)
+    {
+        if (instance.api.World.DefaultSpawnPosition == null)
+            return false;
+
+        // Block all structures with name ruin within border 
+        double dx = pos.X - instance.api.World.DefaultSpawnPosition.X;
+        double dz = pos.Z - instance.api.World.DefaultSpawnPosition.Z;
+        double dist = Math.Sqrt(dx * dx + dz * dz);
+
+        if (dist > instance.config.BorderStart)
+            return true;
+
+        return false;
+    }
+
     [HarmonyPatch(typeof(ItemKnife)), HarmonyPatch("OnHeldInteractStep")]
     class Patch_ItemKnife_Transpile
     {
@@ -150,8 +166,8 @@ public class EternalStormModSystem : ModSystem
         }
     }
 
-    [HarmonyPatch(typeof(WorldGenStructure), "TryGenerateAtSurface")]
-    class Patch_BetterRuins_RadiusGate
+    [HarmonyPatch(typeof(WorldGenStructure), "TryGenerateRuinAtSurface")]
+    class Patch_TryGenerateRuinAtSurface
     {
         static bool Prefix(
             WorldGenStructure __instance,
@@ -162,21 +178,45 @@ public class EternalStormModSystem : ModSystem
             ref bool __result
         )
         {
-            if (instance.api.World.DefaultSpawnPosition == null)
-                return true;
+            var inside = IsOutsideBorderStart(startPos);
+            __result = inside;
+            return inside;
+        }
+    }
 
-            // Block all structures with name ruin within border 
-            double dx = startPos.X - instance.api.World.DefaultSpawnPosition.X;
-            double dz = startPos.Z - instance.api.World.DefaultSpawnPosition.Z;
-            double dist = Math.Sqrt(dx * dx + dz * dz);
+    [HarmonyPatch(typeof(WorldGenStructure), "TryGenerateAtSurface")]
+    class Patch_TryGenerateAtSurface
+    {
+        static bool Prefix(
+            WorldGenStructure __instance,
+            IBlockAccessor blockAccessor,
+            IWorldAccessor worldForCollectibleResolve,
+            BlockPos startPos,
+            string locationCode,
+            ref bool __result
+        )
+        {
+            var inside = IsOutsideBorderStart(startPos);
+            __result = inside;
+            return inside;
+        }
+    }
 
-            if (dist < instance.config.BorderStart)
-            {
-                __result = false; // Don't generate the structure
-                return false;
-            }
-
-            return true;
+    [HarmonyPatch(typeof(WorldGenStructure), "TryGenerateUnderground")]
+    class Patch_TryGenerateUnderground
+    {
+        static bool Prefix(
+            WorldGenStructure __instance,
+            IBlockAccessor blockAccessor,
+            IWorldAccessor worldForCollectibleResolve,
+            BlockPos pos,
+            string locationCode,
+            ref bool __result
+        )
+        {
+            var inside = IsOutsideBorderStart(pos);
+            __result = inside;
+            return inside;
         }
     }
 }
