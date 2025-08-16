@@ -166,6 +166,24 @@ public class EternalStormModSystem : ModSystem
         }
     }
 
+    [HarmonyPatch(typeof(WorldGenStructure), "TryGenerate")]
+    static class Patch_TryGenerate
+    {
+        public static bool Prefix(
+            IBlockAccessor blockAccessor,
+            IWorldAccessor worldForCollectibleResolve,
+            BlockPos startPos,
+            int climateUpLeft, int climateUpRight, int climateBotLeft, int climateBotRight,
+            string locationCode,
+            ref bool __result
+        )
+        {
+            var inside = IsOutsideBorderStart(startPos);
+            __result = inside;
+            return inside;
+        }
+    }
+
     [HarmonyPatch(typeof(WorldGenStructure), "TryGenerateRuinAtSurface")]
     class Patch_TryGenerateRuinAtSurface
     {
