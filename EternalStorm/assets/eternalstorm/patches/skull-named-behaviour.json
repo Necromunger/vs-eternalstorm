@@ -1,0 +1,8 @@
+[
+  {
+    "op": "addmerge",
+    "path": "/behaviors",
+    "value": [ {"name": "BehaviorNamedSkull"} ],
+    "file": "game:itemtypes/clutter.json"
+  }
+]
