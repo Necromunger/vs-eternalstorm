@@ -2,42 +2,6 @@
     {
         "file": "game:itemtypes/tool/saw",
         "op": "remove",
-        "path": "/variantgroups/0/states",
-        "value": "obsidian"
-    },
-    {
-        "file": "game:itemtypes/tool/saw",
-        "op": "remove",
-        "path": "/texturesByType/*-obsidian",
-        "value": { "metal": { "base": "game:item/tool/material/obsidian" } }
-    },
-    {
-        "file": "game:itemtypes/tool/saw",
-        "op": "remove",
-        "path": "/shapeByType",
-        "value": { "saw-obsidian": { "base": "obsidiancraft:item/tool/saw" } }
-    },
-    {
-        "file": "game:itemtypes/tool/saw",
-        "op": "remove",
-        "path": "/toolTierByType",
-        "value": { "saw-obsidian": 1 }
-    },
-    {
-        "file": "game:itemtypes/tool/saw",
-        "op": "remove",
-        "path": "/miningSpeedByType",
-        "value": {
-            "*-obsidian": {
-                "wood": 2.5,
-                "leaves": 1.8
-            }
-        }
-    },
-    {
-        "file": "game:itemtypes/tool/saw",
-        "op": "remove",
-        "path": "/durabilityByType",
-        "value": { "saw-obsidian": 90 }
+        "path": "/variantgroups/0/states/9"
     }
 ]
