@@ -164,6 +164,7 @@ public class EternalStormModSystem : ModSystem
     #endregion
 
     #region Patch Temporal Gear Use Damage
+
     [HarmonyPatch(typeof(ItemKnife)), HarmonyPatch("OnHeldInteractStep")]
     class Patch_ItemKnife_Transpile
     {
@@ -172,24 +173,32 @@ public class EternalStormModSystem : ModSystem
             var code = new List<CodeInstruction>(ins);
 
             var addStab = AccessTools.Method(typeof(EntityBehaviorTemporalStabilityAffected), "AddStability", new[] { typeof(double) });
-            var recvDmg = AccessTools.Method(typeof(EntityAgent), "ReceiveDamage", new[] { typeof(DamageSource), typeof(float) });
+            var recvDmg = AccessTools.Method(typeof(Entity), nameof(Entity.ReceiveDamage), new[] { typeof(DamageSource), typeof(float) });
             var getStab = AccessTools.PropertyGetter(typeof(EternalStormModSystem), nameof(StabilityPerGear));
             var getDmg = AccessTools.PropertyGetter(typeof(EternalStormModSystem), nameof(DamageOnGearUse));
 
             for (int i = 0; i < code.Count - 1; i++)
             {
-                // Replace constant before AddStability
+                // Replace constant before AddStability(...)
                 if (code[i + 1].Calls(addStab))
-                    code[i] = new CodeInstruction(OpCodes.Call, getStab);
+                {
+                    // mutate to preserve labels/blocks
+                    code[i].opcode = OpCodes.Call;
+                    code[i].operand = getStab;
+                }
 
-                // Replace constant before ReceiveDamage
+                // Replace constant before ReceiveDamage(...)
                 if (code[i + 1].Calls(recvDmg))
-                    code[i] = new CodeInstruction(OpCodes.Call, getDmg);
+                {
+                    code[i].opcode = OpCodes.Call;
+                    code[i].operand = getDmg;
+                }
             }
 
             return code;
         }
     }
+
     #endregion
 
     #region Patch Stability Damage
