@@ -1,3 +1,5 @@
 {
-    "hello": "hello world!"
+    "game:item-saw-tin": "Tin saw",
+    "game:item-sawblade-tin": "Tin sawblade",
+    "game:itemcraftdesc-sawblade-tin": "Tin smitheded into shape for use as a sawblade."
 }

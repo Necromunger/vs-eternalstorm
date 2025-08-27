@@ -1,0 +1,55 @@
+[
+    {
+        "file": "game:itemtypes/tool/saw",
+        "op": "addmerge",
+        "path": "/variantgroups/0/states/-",
+        "value": "tin"
+    },
+    {
+        "file": "game:itemtypes/tool/saw",
+        "op": "move",
+        "frompath": "/texturesByType/*",
+        "path": "/temp"
+    },
+    {
+        "file": "game:itemtypes/tool/saw",
+        "op": "addmerge",
+        "path": "/texturesByType/*-tin",
+        "value": { "metal": { "base": "eternalstorm:item/tool/material/tin" } }
+    },
+    {
+        "file": "game:itemtypes/tool/saw",
+        "op": "move",
+        "frompath": "/temp",
+        "path": "/texturesByType/*"
+    },
+    {
+        "file": "game:itemtypes/tool/saw",
+        "op": "addmerge",
+        "path": "/shapeByType",
+        "value": { "saw-tin": { "base": "game:item/tool/saw" } }
+    },
+    {
+        "file": "game:itemtypes/tool/saw",
+        "op": "addmerge",
+        "path": "/toolTierByType",
+        "value": { "saw-tin": 1 }
+    },
+    {
+        "file": "game:itemtypes/tool/saw",
+        "op": "addmerge",
+        "path": "/miningSpeedByType",
+        "value": {
+            "*-tin": {
+                "wood": 2.5,
+                "leaves": 2
+            }
+        }
+    },
+    {
+        "file": "game:itemtypes/tool/saw",
+        "op": "addmerge",
+        "path": "/durabilityByType",
+        "value": { "saw-tin": 100 }
+    }
+]

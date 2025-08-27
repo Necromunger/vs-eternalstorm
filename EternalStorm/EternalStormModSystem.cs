@@ -182,7 +182,6 @@ public class EternalStormModSystem : ModSystem
                 // Replace constant before AddStability(...)
                 if (code[i + 1].Calls(addStab))
                 {
-                    // mutate to preserve labels/blocks
                     code[i].opcode = OpCodes.Call;
                     code[i].operand = getStab;
                 }
