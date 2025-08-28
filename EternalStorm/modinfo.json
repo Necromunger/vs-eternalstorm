@@ -1,12 +1,12 @@
 {
     "type": "code",
     "modid": "eternalstorm",
-    "name": "EternalStorm",
+    "name": "Eternal Storm",
     "authors": [
         "Necromunger"
     ],
     "description": "Adds soft border to world, going further out lowers sanity",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "requiredonclient": true,
     "requiredonserver": true,
     "dependencies": {

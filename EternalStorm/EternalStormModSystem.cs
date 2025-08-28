@@ -333,8 +333,8 @@ public class EternalStormModConfig
     public float LowStabilityDamage = 0f;
     public double StabilityPerGear = 1.0f;
     public float DamageOnGearUse = 0f;
-    public int BorderStart = 30;
-    public int BorderEnd = 50;
+    public int BorderStart = 6000;
+    public int BorderEnd = 8000;
 
     public static EternalStormModConfig GetDefault(ICoreAPI api)
     {
