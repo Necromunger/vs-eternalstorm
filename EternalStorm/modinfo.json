@@ -11,6 +11,7 @@
     "requiredonserver": true,
     "dependencies": {
       "game": "",
-      "playercorpse": ""
+      "playercorpse": "",
+      "obsidiancraft": ""
     }
 }
