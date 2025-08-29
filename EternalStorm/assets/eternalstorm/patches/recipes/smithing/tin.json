@@ -1,5 +1,11 @@
 [
     {
+        "file": "game:recipes/smithing/chisel",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants/-",
+        "value": "tin"
+    },
+    {
         "file": "game:recipes/smithing/hammer",
         "op": "addmerge",
         "path": "/ingredient/allowedVariants/-",

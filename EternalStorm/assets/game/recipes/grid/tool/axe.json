@@ -1,0 +1,32 @@
+[
+	{
+		ingredientPattern: "T	S",
+		ingredients: {
+			"T": { type: "item", code: "axehead-*", name: "material", allowedVariants: [ "tin", "copper", "tinbronze", "bismuthbronze", "blackbronze", "gold", "silver", "iron", "meteoriciron", "steel" ]  },
+			"S": { type: "item", code: "stick" }
+		},
+		width: 1,
+		height: 2,
+		output: { type: "item", code: "axe-felling-{material}", quantity: 1  }
+	},
+	{
+		ingredientPattern: "T	B",
+		ingredients: {
+			"T": { type: "item", code: "axehead-*", name: "material", allowedVariants: [ "granite", "andesite", "basalt", "obsidian", "peridotite", "flint", "chert" ] },
+			"B": { type: "item", code: "stick" }
+		},
+		width: 1,
+		height: 2,
+		output: { type: "item", code: "axe-{material}", quantity: 1  }
+	},
+	{
+		ingredientPattern: "T	B",
+		ingredients: {
+			"T": { type: "item", code: "axehead-*", name: "material", allowedVariants: [ "granite", "andesite", "basalt", "obsidian", "peridotite", "flint", "chert" ] },
+			"B": { type: "item", code: "bone" }
+		},
+		width: 1,
+		height: 2,
+		output: { type: "item", code: "axe-bone-{material}", quantity: 1  }
+	}
+]
