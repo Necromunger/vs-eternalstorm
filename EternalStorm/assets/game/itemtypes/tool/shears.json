@@ -55,7 +55,7 @@
 		"shears-steel": 3.5
 	},
 	durabilitybytype: {
-		"shears-gold": 750,
+		"shears-gold": 600,
 		"shears-silver": 750,
 		"shears-tin": 750,
 		"shears-copper": 1000,

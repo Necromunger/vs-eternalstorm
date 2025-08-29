@@ -1,10 +1,21 @@
 {
     "game:anvil-tin": "Tin anvil",
     "game:block-anvil-tin": "Tin anvil",
+    "game:item-chisel-tin": "Tin chisel",
+    "game:item-axe-felling-tin": "Tin axe",
+    "game:item-axehead-tin": "Tin axe head",
+    "game:item-prospectingpick-tin": "Tin prospecting pick",
+    "game:item-prospectingpickhead-tin": "Tin prospecting pick head",
+    "game:item-hammer-tin": "Tin hammer",
+    "game:item-hammerhead-tin": "Tin hammer head",
+    "game:item-scythe-tin": "Tin scythe",
+    "game:item-scythehead-tin": "Tin scythe head",
     "game:item-pickaxe-tin": "Tin pickaxe",
     "game:item-pickaxehead-tin": "Tin pickaxe head",
     "game:item-saw-tin": "Tin saw",
     "game:item-sawblade-tin": "Tin saw blade",
     "game:item-shears-tin": "Tin shears",
-    "game:itemcraftdesc-sawblade-tin": "Tin smitheded into shape for use as a sawblade."
+    "game:itemcraftdesc-sawblade-tin": "Tin sawblade",
+    "game:item-spear-generic-tin": "Tin spear",
+    "game:item-spearhead-tin": "Tin spear head"
 }

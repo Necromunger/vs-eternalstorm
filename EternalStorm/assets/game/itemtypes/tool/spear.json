@@ -1,0 +1,369 @@
+{
+	code: "spear",
+	class: "ItemSpear",
+	tags: ["weapon", "weapon-melee"],
+	damagedby: ["attacking"],
+	tool: "spear",
+	behaviors: [
+		{ name: "GroundStorable", properties: { layout: 'WallHalves', wallOffY: 3, ctrlKey: true, selectionBox: { x1: 0, y1: 0, z1: 0, x2: 1, y2: 0.1, z2: 1 }, collisionBox: { x1: 0, y1: 0, z1: 0, x2: 0, y2: 0, z2: 0 } } },
+		{ name: "AnimationAuthoritative" }
+	],
+	variantgroups: [
+		{ code: "type", states: ["generic", "scrap", "boar", "voulge", "fork", "ranseur"] },
+		{ code: "material", states: ["chert", "granite", "andesite", "basalt", "obsidian", "peridotite", "flint", "scrap", "tin", "copper", "tinbronze", "bismuthbronze", "blackbronze", "ornategold", "ornatesilver", "hacking", "ruined", "erel"] },
+	],
+	skipVariants: [
+		"spear-generic-ruined",
+		"spear-generic-scrap"
+	],
+	allowedVariants: [
+		"spear-generic-*",
+		"spear-scrap-scrap",
+		"spear-boar-ruined",
+		"spear-voulge-ruined",
+		"spear-fork-ruined",
+		"spear-ranseur-ruined"
+	],
+	shapeByType: {
+		"spear-generic-erel": { base: "entity/nonliving/projectile/erel-large-usable" },
+		"spear-scrap-scrap": { base: "item/tool/spear/scrap" },
+		"spear-generic-hacking": { base: "item/tool/spear/hacking" },
+		"spear-generic-ornategold": { base: "item/tool/spear/ornategold" },
+		"spear-generic-ornatesilver": { base: "item/tool/spear/ornatesilver" },
+		"@spear-generic-(chert|granite|andesite|basalt|obsidian|peridotite|flint)": { base: "item/tool/spear/stone" },
+		"@spear-generic-(tin|copper|tinbronze|bismuthbronze|blackbronze)": { base: "item/tool/spear/copper" },
+		"*-ruined": { base: "item/tool/spear/ruined/{type}" }
+	},
+	heldTpIdleAnimation: "spearidle",
+	heldRightReadyAnimation: "spearidle",
+	heldTpHitAnimation: "spearhit",
+	texturesByType: {
+		"spear-generic-erel": { },
+		"spear-scrap-scrap": { },
+		"spear-generic-hacking": { },
+		"spear-generic-flint": { 
+			"material": { base: "block/stone/{material}" } 
+		},
+		"@spear-generic-(chert|granite|andesite|basalt|obsidian|peridotite)": { 
+			"material": { base: "block/stone/rock/{material}1" } 
+		},
+		"@spear-generic-(tin|copper|tinbronze|bismuthbronze|blackbronze)": { 
+			"material": { base: "block/metal/ingot/{material}" } 
+		},
+		"spear-generic-ornate*": { },
+		"spear-generic-*": { 
+			"material": { base: "item/tool/material/{material}" } 
+		}
+	},
+	attackRange: 3.5,
+	attackpowerbytype: {
+		"spear-generic-chert": 1.75,
+		"spear-generic-granite": 1.75,
+		"spear-generic-andesite": 1.75,
+		"spear-generic-peridotite": 1.75,
+		"spear-generic-basalt": 1.75,
+		"spear-generic-flint": 2,
+		"spear-generic-obsidian": 2.25,
+		"spear-generic-tin": 2.5,
+		"spear-scrap-scrap": 2.75,
+		"spear-generic-copper": 2.75,
+		"spear-generic-erel": 3,
+		"spear-generic-bismuthbronze": 3.25,
+		"spear-generic-tinbronze": 3.75,
+		"spear-generic-blackbronze": 4,
+		"spear-generic-hacking": 2,
+		"spear-generic-ornategold": 4.25,
+		"spear-generic-ornatesilver": 4.25,
+		"*-ruined": 4
+	},
+	attributes: {
+		heldItemPitchFollow: 1,
+		groundStorageTransformByType: {
+			"spear-generic-hacking": {
+				translation: { x: -0.45, y: 0.35, z: 0.2 },
+				rotation: { x: 16, y: 1, z: 90 },
+				scale: 0.85
+			},
+			"spear-scrap-scrap": {
+				translation: { x: 0, y: 0.25, z: 0.546 },
+				rotation: { x: 16, y: 90, z: 90 },
+				scale: 0.85
+			},
+			"spear-boar-ruined": {
+				translation: { x: 0, y: 0.65, z: 0.61 },
+				rotation: { x: 16, y: 90, z: 90 },
+				scale: 0.85
+			},
+			"spear-voulge-ruined": {
+				translation: { x: 0.24, y: 0.65, z: 0.516 },
+				rotation: { x: 16, y: 130, z: 90 },
+				scale: 0.85
+			},
+			"spear-fork-ruined": {
+				translation: { x: -0.25, y: 0.65, z: 0.11 },
+				rotation: { x: 16, y: 0, z: 90 },
+				scale: 0.85
+			},
+			"spear-ranseur-ruined": {
+				translation: { x: 0, y: 0.93, z: -0.11 },
+				rotation: { x: 16, y: -90, z: 90 },
+				scale: 0.85
+			},
+			"@spear-generic-(tin|copper|tinbronze|bismuthbronze|blackbronze)": {
+				translation: { x: -0.39, y: 0.78, z: 0.235 },
+				rotation: { x: 16, y: 1, z: 90 },
+				scale: 0.85
+			},
+			"spear-generic-ornate*": {
+				translation: { x: -0.39, y: 0.72, z: 0.25 },
+				rotation: { x: 16, y: 1, z: 90 },
+				scale: 0.81
+			},
+			"*": {
+				translation: { x: 0, y: 0.26, z: 0.596 },
+				rotation: { x: 16, y: 90, z: 90 },
+				scale: 0.85
+			}
+		},
+		hackingByType: {
+			"*-hacking": true
+		},
+		// Thrown damage
+		damageByType: {
+			"*-chert": 4,
+			"*-granite": 4,
+			"*-andesite": 4,
+			"*-peridotite": 4,
+			"*-basalt": 4,
+			"*-flint": 5,
+			"*-obsidian": 5.25,
+			"*-scrap": 5.75,
+			"*-tin": 5.75,
+			"*-copper": 5.75,
+			"*-erel": 5.75,
+			"*-bismuthbronze": 6.5,
+			"*-tinbronze": 7.5,
+			"*-blackbronze": 8,
+			"*-ruined": 8,
+			"*-hacking": 7,
+			"*-ornategold": 8.25,
+			"*-ornatesilver": 8.25
+		},
+		damageTierByType: {
+			"*-chert": 0,
+			"*-granite": 0,
+			"*-andesite": 0,
+			"*-peridotite": 0,
+			"*-basalt": 0,
+			"*-flint": 0,
+			"*-obsidian": 0,
+			"*-scrap": 0,
+			"*-tin": 0,
+			"*-copper": 0,
+			"*-erel": 0,
+			"*-bismuthbronze": 0,
+			"*-tinbronze": 0,
+			"*-blackbronze": 0,
+			"*-ruined": 0,
+			"*-hacking": 0,
+			"*-ornategold": 0,
+			"*-ornatesilver": 0
+		},
+		spearEntityCodeByType: {
+			"spear-generic-erel": "erelprojectile-large-usable",
+			"*": "spear-{type}-{material}",
+		},
+		handbook: {
+			groupBy: ["spear-*"]
+		},
+		toolrackTransformByType: {
+			"spear-generic-erel": {
+				translation: { x: 0.55, y: 0.5, z: 0 },
+				rotation: { x: 0, y: 1, z: -1 },
+				scale: 1
+			},
+			"spear-scrap-scrap": {
+				rotation: { x: 0, y: 1, z: -1 },
+				translation: { x: -0.35, y: 0.7, z: 0 },
+				scale: 1.36
+			},
+			"spear-voulge-ruined": {
+				translation: { x: 0.3, y: 0.4, z: 0.7 },
+				rotation: { x: 60, y: 1, z: -1 },
+				scale: 1.37
+			},
+			"spear-fork-ruined": {
+				translation: { x: 0.95, y: -0.27, z: 0.6 },
+				rotation: { x: 125, y: 1, z: -1 },
+				scale: 1.36
+			},
+			"spear-ranseur-ruined": {
+				translation: { x: 0.56, y: 0.05, z: 0.6 },
+				rotation: { x: 89, y: 1, z: -1 },
+				scale: 1.36
+			},
+			"spear-boar-ruined": {
+				translation: { x: 0.45, y: 0.05, z: 0.7 },
+				rotation: { x: 89, y: 1, z: -1 }
+			},
+			"@spear-generic-(tin|copper|tinbronze|bismuthbronze|blackbronze|ornategold|hacking|ornatesilver)": {
+				rotation: { x: 90, y: 1, z: -1 },
+				translation: { x: 0.31, y: 0.04, z: 0.7 },
+				scale: 1.36
+			},
+			"spear-generic-hacking": {
+				rotation: { x: 90, y: 1, z: -1 },
+				translation: { x: -0.19, y: 0.04, z: 0.7 },
+				scale: 1.36
+			},
+			"*": {
+				rotation: { y: 1, z: -1 },
+				translation: { x: -0.23, y: 0.66 },
+				scale: 1.36
+			}
+		}
+	},
+	durabilitybytype: {
+		"spear-generic-chert": 16,
+		"spear-generic-granite": 16,
+		"spear-generic-andesite": 16,
+		"spear-generic-basalt": 16,
+		"spear-generic-peridotite": 16,
+		"spear-generic-obsidian": 45,
+		"spear-generic-flint": 32,
+		"spear-scrap-scrap": 80,
+		"spear-generic-tin": 120,
+		"spear-generic-copper": 140,
+		"spear-generic-tinbronze": 220,
+		"spear-generic-bismuthbronze": 260,
+		"spear-generic-blackbronze": 300,
+		"spear-generic-hacking": 250,
+		"spear-generic-ornategold": 320,
+		"spear-generic-ornatesilver": 320,
+		"*-ruined": 15,
+		"*-erel": 2
+	},
+	creativeinventory: { "general": ["*"], "items": ["*"], "tools": ["*"] },
+	guiTransformByType: {
+		"*-erel": {
+			translation: { x: -0.1, y: 0, z: 0 },
+			rotation: { x: -60, y: 124, z: 6 },
+			origin: { x: 0.39, y: 0, z: 0.5 },
+			scale: 2.26
+		},
+		"spear-generic-hacking": {
+			translation: { x: 0, y: 0, z: 0 },
+			rotation: { x: 23, y: -180, z: -52 },
+			origin: { x: 1.43, y: 0, z: 0.52 },
+			scale: 2.26
+		},
+		"spear-scrap-scrap": {
+			translation: { x: 0, y: 0, z: 0 },
+			rotation: { x: -60, y: 124, z: 6 },
+			origin: { x: 1.54, y: 0, z: 0.5 },
+			scale: 2.26
+		},
+		"spear-voulge-ruined": {
+			translation: { x: 0, y: 0, z: 0 },
+			rotation: { x: -180, y: 128, z: 38 },
+			origin: { x: 1.29, y: 0, z: 0.5 },
+			scale: 2.26
+		},
+		"spear-ranseur-ruined": {
+			translation: { x: 0, y: 0, z: 0 },
+			rotation: { x: -175, y: 140, z: 38 },
+			origin: { x: 1.19, y: 0, z: 0.6 },
+			scale: 2.26
+		},
+		"@spear-generic-(tin|copper|tinbronze|bismuthbronze|blackbronze|ornate-gold|ornate-silver)": {
+			translation: { x: 0, y: 0, z: 0 },
+			rotation: { x: 33, y: 0, z: -127 },
+			origin: { x: 1.29, y: 0.05, z: 0.52 },
+			scale: 2.26
+		},
+		"*": {
+			translation: { x: 0, y: 0, z: 0 },
+			rotation: { x: -60, y: 124, z: 6 },
+			origin: { x: 1.19, y: 0, z: 0.5 },
+			scale: 2.26
+		}
+	},
+	fpHandTransformByType: {
+		"spear-voulge-ruined": {
+			translation: { x: 0.1, y: 0.4, z: 0.16 },
+			rotation: { x: -82, y: 90, z: 96 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 2.45
+		},
+		"*": {
+			translation: { x: 0.1, y: 0.4, z: 0.16 },
+			rotation: { x: -82, y: 180, z: 96 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 2.45
+		}
+	},
+	groundTransformByType: {
+		"spear-scrap-scrap": {
+			translation: { x: 0, y: 0.05, z: 0 },
+			rotation: { x: 0, y: 0, z: 0 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 3.4
+		},
+		"spear-voulge-ruined": {
+			translation: { x: 0, y: 0.05, z: 0 },
+			rotation: { x: 68, y: 0, z: 0 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 3.4
+		},
+		"spear-fork-ruined": {
+			translation: { x: 0, y: 0.05, z: 0 },
+			rotation: { x: -90, y: 0, z: 0 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 3.4
+		},
+		"*": {
+			translation: { x: 0, y: 0.05, z: 0 },
+			rotation: { x: 90, y: 0, z: 0 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 3.4
+		}
+	},
+	tpHandTransformByType: {
+		"spear-scrap-scrap": {
+			translation: { x: -1.14, y: 0.01, z: -0.6 },
+			rotation: { x: -90, y: 0, z: 0 },
+			origin: { x: 0.6, y: 0, z: 0.5 },
+			scale: 0.8
+		},
+		"spear-voulge-ruined": {
+			translation: { x: -1.24, y: 0.03, z: -0.61 },
+			rotation: { x: 0, y: 0, z: 0 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 0.8
+		},
+		"@spear-generic-(tin|copper|tinbronze|bismuthbronze|blackbronze|hacking)": {
+			translation: { x: -1.29, y: 0.03, z: -0.57 },
+			rotation: { x: -90, y: 0, z: 0 },
+			origin: { x: 0.6, y: 0, z: 0.5 },
+			scale: 0.8
+		},
+		"@spear-generic-(ornategold|ornatesilver)": {
+			translation: { x: -1.04, y: 0.02, z: -0.57 },
+			rotation: { x: -90, y: 0, z: 0 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 0.8
+		},
+		"*-ruined": {
+			translation: { x: -1.24, y: 0.03, z: -0.61 },
+			rotation: { x: -90, y: 0, z: 0 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 0.8
+		},
+		"*": {
+			translation: { x: -1.29, y: 0.02, z: -0.57 },
+			rotation: { x: -90, y: 0, z: 0 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 0.8
+		}
+	}
+}

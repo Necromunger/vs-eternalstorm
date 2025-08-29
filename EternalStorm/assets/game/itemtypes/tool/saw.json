@@ -46,6 +46,7 @@
 		}
 	},
 	tooltierbytype: {
+		"saw-tin": 1,
 		"saw-copper": 2,
 		"saw-gold": 2,
 		"saw-silver": 2,
@@ -66,8 +67,8 @@
 			"leaves": 2.4
 		},
         "*-tin": {
-			"wood": 3,
-			"leaves": 2
+			"wood": 3.5,
+			"leaves": 2.2
 		},
 		"*-copper": {
 			"wood": 4,
@@ -107,7 +108,7 @@
 		}
 	},
 	durabilitybytype: {
-		"saw-gold": 70,
+		"saw-gold": 100,
 		"saw-silver": 90,
 		"saw-tin": 150,
 		"saw-copper": 250,

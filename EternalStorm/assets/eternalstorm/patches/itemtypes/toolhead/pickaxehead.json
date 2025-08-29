@@ -1,8 +1,0 @@
-[
-    {
-        "file": "game:itemtypes/toolhead/pickaxehead",
-        "op": "addmerge",
-        "path": "/variantgroups/0/states/-",
-        "value": "tin"
-    }
-]

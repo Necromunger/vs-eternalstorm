@@ -1,5 +1,11 @@
 [
     {
+        "file": "game:recipes/smithing/hammer",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants/-",
+        "value": "tin"
+    },
+    {
         "file": "game:recipes/smithing/saw",
         "op": "addmerge",
         "path": "/ingredient/allowedVariants/-",
@@ -7,6 +13,30 @@
     },
     {
         "file": "game:recipes/smithing/pickaxe",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants/-",
+        "value": "tin"
+    },
+    {
+        "file": "game:recipes/smithing/axe",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants/-",
+        "value": "tin"
+    },
+    {
+        "file": "game:recipes/smithing/scythe",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants/-",
+        "value": "tin"
+    },
+    {
+        "file": "game:recipes/smithing/prospectingpick",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants/-",
+        "value": "tin"
+    },
+    {
+        "file": "game:recipes/smithing/spear",
         "op": "addmerge",
         "path": "/ingredient/allowedVariants/-",
         "value": "tin"

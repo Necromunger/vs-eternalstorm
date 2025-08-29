@@ -62,11 +62,11 @@
 			"ice": 1.2
 		},
 		"pickaxe-copper": {
-			"ceramic": 1.5,
-			"stone": 4,
-			"ore": 4,
-			"metal": 4,
-			"ice": 1.75
+			"ceramic": 1.6,
+			"stone": 4.5,
+			"ore": 4.5,
+			"metal": 4.5,
+			"ice": 1.8
 		},
 		"pickaxe-bismuthbronze": {
 			"ceramic": 2,
@@ -126,7 +126,7 @@
 		}
 	},
 	attackpowerbytype: {
-		"pickaxe-tin": 1.1,
+		"pickaxe-tin": 1.2,
 		"pickaxe-copper": 1.25,
 		"pickaxe-bismuthbronze": 1.5,
 		"pickaxe-tinbronze": 1.75,
@@ -138,8 +138,8 @@
 		"pickaxe-steel": 2.5
 	},
 	durabilitybytype: {
-		"pickaxe-tin": 100,
-		"pickaxe-gold": 150,
+		"pickaxe-gold": 125,
+		"pickaxe-tin": 150,
 		"pickaxe-silver": 175,
 		"pickaxe-copper": 300,
 		"pickaxe-tinbronze": 450,

@@ -1,0 +1,314 @@
+{
+	code: "axe",
+	damagedby: ["blockbreaking", "attacking"],
+	tool: "axe",
+	class: "ItemAxe",
+	attributes: {
+		heldItemPitchFollow: 0.9,
+		handbook: {
+			groupBy: ["axe-*"]
+		},
+		toolrackTransformByType: {
+			"*-scrap": {
+				translation: { x: -0.2, y: 0.65, z: 0.1 },
+				rotation: { x: 4, y: -3, z: -1 },
+				scale: 1.25
+			},
+			"axe-bardiche-ruined": {
+				translation: { x: 0, y: 0.7, z: 0.2 },
+				rotation: { x: 22, y: 1, z: -1 },
+				scale: 1.25
+			},
+			"axe-battle-ruined": {
+				translation: { x: -0.2, y: 0.7, z: 0.1 },
+				rotation: { x: 12, y: 1, z: -1 },
+				scale: 1.25
+			},
+			"axe-double-ruined": {
+				translation: { x: 0, y: 0.7, z: -0.2 },
+				rotation: { x: -12, y: 1, z: -1 },
+				scale: 1.25
+			},
+			"axe-bearded-ruined": {
+				translation: { x: -0.3, y: 0.7, z: 0 },
+				rotation: { x: 0, y: 1, z: -1 },
+				scale: 1.25
+			},
+			"*": {
+				rotation: { y: 1, z: -1 },
+				translation: { x: -0.3, y: 0.6 },
+				scale: 1.25,
+			}
+		},
+		groundStorageTransformByType: {
+			"*-scrap": {
+				translation: { x: 0, y: 0.33, z: -0.055 },
+				rotation: { x: 26, y: 88, z: -87 }
+			},
+			"axe-bearded-ruined": {
+				translation: { x: 0, y: 0.2, z: -0.1435 },
+				rotation: { x: 26, y: 88, z: -94 },
+				scale: 0.88
+			},
+			"axe-battle-ruined": {
+				translation: { x: 0.45, y: -0.1, z: 0.22 },
+				rotation: { x: 34, y: 0, z: -90 },
+				scale: 0.88
+			},
+			"axe-bardiche-ruined": {
+				translation: { x: 0.45, y: -0.1, z: -0.02 },
+				rotation: { x: 26, y: 0, z: -87 },
+				scale: 0.88
+			},
+			"axe-double-ruined": {
+				translation: { x: -0.1, y: 0.14, z: -0.34 },
+				rotation: { x: 26, y: 110, z: -87 },
+				scale: 0.88
+			},
+			"*": {
+				translation: { x: 0, y: 0.19, z: -0.135 },
+				rotation: { x: 26, y: 88, z: -87 },
+				scale: 0.88
+			}
+		}
+	},
+	behaviors: [{ 
+		name: "GroundStorable",
+		properties: {
+			layout: 'WallHalves',
+			wallOffYByType: {
+				"axe-bardiche-ruined": 2,
+				"axe-double-ruined": 2,
+				"*": 1
+			},
+			ctrlKey: true,
+			selectionBox: { x1: 0, y1: 0, z1: 0, x2: 1, y2: 0.1, z2: 1 },
+			collisionBox: { x1: 0, y1: 0, z1: 0, x2: 0, y2: 0, z2: 0 },
+		}
+	}, { name: "AnimationAuthoritative", properties: { onlyOnEntity: true } }],
+	variantgroups: [
+		{ code: "type", states: ["scrap", "felling", "bearded", "battle", "bardiche", "double" ] },
+		{ code: "material", states: ["tin", "scrap", "copper", "tinbronze", "bismuthbronze", "blackbronze", 
+																 "gold", "silver", "iron", "meteoriciron", "steel", "ruined"
+		  ] }
+	],
+	skipVariants: [
+		"axe-felling-scrap",
+		"axe-felling-ruined"
+	],
+	allowedVariants: [
+		"axe-felling-*",
+		"axe-scrap-scrap",
+		"axe-bearded-ruined",
+		"axe-battle-ruined",
+		"axe-bardiche-ruined",
+		"axe-double-ruined"
+	],
+	shapeByType: {
+		"axe-scrap-scrap": { "base": "item/tool/axe/scrap" },
+		"axe-felling-tin": { "base": "item/tool/axe/copper" },
+		"axe-felling-copper": { "base": "item/tool/axe/copper" },
+		"axe-felling-tinbronze": { "base": "item/tool/axe/copper" },
+		"axe-felling-bismuthbronze": { "base": "item/tool/axe/copper" },
+		"axe-felling-blackbronze": { "base": "item/tool/axe/copper" },
+		"axe-felling-gold": { "base": "item/tool/axe/iron" },
+		"axe-felling-silver": { "base": "item/tool/axe/iron" },
+		"axe-felling-iron": { "base": "item/tool/axe/iron" },
+		"axe-felling-meteoriciron": { "base": "item/tool/axe/iron" },
+		"axe-felling-steel": { "base": "item/tool/axe/iron" },
+		"*-ruined": { base: "item/tool/axe/ruined/{type}" }
+	},
+
+	heldRightReadyAnimationByType: {
+		"axe-felling-*": "axeready",
+		"axe-double-*": "axeready",
+		"axe-bardiche-*": "axeready",
+		"*": "beginholditem"
+	},
+	heldTpHitAnimationByType: {
+		"axe-felling-*": "axechop",
+		"axe-double-*": "axechop",
+		"axe-bardiche-*": "axechop",
+		"*": "breaktool"
+	},
+	texturesByType: {
+		"axe-scrap-scrap": { },
+		"axe-felling-*": {
+			"material": { base: "block/metal/ingot/{material}" }
+		}
+	},
+	attackRange: 2,
+	tooltierbytype: {
+		"*-tin": 1,
+		"*-scrap": 2,
+		"*-copper": 2,
+		"*-gold": 2,
+		"*-silver": 2,
+		"*-ruined": 2,
+		"*-bismuthbronze": 3,
+		"*-tinbronze": 3,
+		"*-blackbronze": 3,
+		"*-iron": 4,
+		"*-meteoriciron": 4,
+		"*-steel": 5
+	},
+	miningspeedbytype: {
+		"axe-scrap-tin": {
+			"wood": 4.5,
+			"plant": 2.6,
+			"leaves": 2.2
+		},
+		"axe-scrap-scrap": {
+			"wood": 4,
+			"plant": 2.6,
+			"leaves": 2.2
+		},
+		"axe-felling-copper": {
+			"wood": 5.2,
+			"plant": 2.8,
+			"leaves": 2.4
+		},
+		"axe-felling-silver": {
+			"wood": 4.5,
+			"plant": 3.3,
+			"leaves": 3
+		},
+		"axe-felling-gold": {
+			"wood": 4.5,
+			"plant": 3.3,
+			"leaves": 3
+		},
+		"*-bismuthbronze": {
+			"wood": 5.8,
+			"plant": 3.5,
+			"leaves": 2.6
+		},
+		"axe-felling-bismuthbronze": {
+			"wood": 5.8,
+			"plant": 3.5,
+			"leaves": 2.6
+		},
+		"axe-felling-tinbronze": {
+			"wood": 6.3,
+			"plant": 3.8,
+			"leaves": 3
+		},
+		"axe-felling-blackbronze": {
+			"wood": 6.6,
+			"plant": 4,
+			"leaves": 3.1
+		},
+		"axe-felling-iron": {
+			"wood": 8.4,
+			"plant": 5,
+			"leaves": 3.2
+		},
+		"axe-felling-meteoriciron": {
+			"wood": 9.6,
+			"plant": 5.5,
+			"leaves": 3.6
+		},
+		"axe-felling-steel": {
+			"wood": 11,
+			"plant": 6,
+			"leaves": 4
+		}
+	},
+	durabilitybytype: {
+		"*-ruined": 15,
+		"axe-felling-tin": 100,
+		"axe-scrap-scrap": 125,
+		"axe-felling-gold": 125,
+		"axe-felling-silver": 125,
+		"axe-felling-copper": 250,
+		"axe-felling-blackbronze": 600,
+		"axe-felling-bismuthbronze": 500,
+		"axe-felling-tinbronze": 400,
+		"axe-felling-iron": 900,
+		"axe-felling-meteoriciron": 1200,
+		"axe-felling-steel": 1800
+	},
+	attackpowerbytype: {
+		"axe-scrap-scrap": 1.5,
+		"axe-felling-tin": 1.5,
+		"axe-felling-copper": 2,
+		"axe-felling-bismuthbronze": 2.5,
+		"axe-felling-gold": 2.5,
+		"axe-felling-silver": 2.5,
+		"axe-felling-tinbronze": 2.75,
+		"axe-felling-blackbronze": 3,
+		"axe-felling-iron": 3,
+		"axe-felling-meteoriciron": 3.5,
+		"axe-felling-steel": 4,
+		"*-ruined": 4.5
+	},
+	creativeinventory: { "general": ["*"], "items": ["*"], "tools": ["*"], "clutterByType": { "*-ruined": ["*"] } },
+
+	fpHandTransform: {
+		translation: { x: -0.3, y: -0.5, z: 0.3 },
+		rotation: { x: -29, y: 1, z: 88 },
+		origin: { x: 0.2, y: 0.5, z: 0.5 },
+		scale: 2.5
+	},
+	guiTransformByType: {
+		"*-scrap": {
+			translation: { x: 0, y: 0, z: 0 },
+			rotation: { x: -65, y: -127, z: -180 },
+			origin: { x: 0.65, y: 0.1, z: 0.48 },
+			scale: 1.85
+		},
+		"*": {
+			translation: { x: 0, y: 0, z: 0 },
+			rotation: { x: -63, y: -123, z: -180 },
+			origin: { x: 0.61, y: 0, z: 0.47 },
+			scale: 1.58
+		}
+	},
+	groundTransformByType: {
+		"*-scrap": {
+			translation: { x: 0, y: 0, z: 0 },
+			rotation: { x: 0, y: 0, z: 0 },
+			origin: { x: 0.5, y: -0.1, z: 0.5 },
+			scale: 3.6
+		},
+		"*-ruined": {
+			translation: { x: 0, y: 0.03, z: 0 },
+			rotation: { x: 0, y: 0, z: 0 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 3.6
+		},
+		"*": {
+			translation: { x: 0, y: 0, z: 0 },
+			rotation: { x: 0, y: 0, z: 0 },
+			origin: { x: 0.5, y: 0, z: 0.5 },
+			scale: 3.6
+		}
+	},
+	tpHandTransformByType: {
+		"*-scrap": {
+			translation: { x: -0.65, y: -0.5, z: -0.05 },
+			rotation: { x: 90, y: 0, z: -10 },
+			scale: 0.95
+		},
+		"axe-bardiche-ruined": {
+			translation: { x: -1.09, y: -0.5, z: -0.03 },
+			rotation: { x: 90, y: 0, z: -2 },
+			scale: 0.95
+		},
+		"axe-battle-ruined": {
+			translation: { x: -0.69, y: -0.5, z: -0.03 },
+			rotation: { x: 90, y: 0, z: -2 },
+			scale: 0.95
+		},
+		"*-ruined": {
+			translation: { x: -0.89, y: -0.5, z: -0.03 },
+			rotation: { x: 90, y: 0, z: -2 },
+			scale: 0.95
+		},
+		"*": {
+			translation: { x: -0.43, y: -0.52, z: -0.07 },
+			rotation: { x: 90, y: 0, z: 0 },
+			scale: 0.95
+		}
+	}
+}
