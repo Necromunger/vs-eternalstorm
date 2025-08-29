@@ -313,7 +313,7 @@ public class EternalStormModSystem : ModSystem
         double dx = pos.X - instance.api.World.DefaultSpawnPosition.X;
         double dz = pos.Z - instance.api.World.DefaultSpawnPosition.Z;
         double dist = Math.Sqrt(dx * dx + dz * dz);
-
+        
         if (dist > instance.config.BorderStart)
             return true;
 

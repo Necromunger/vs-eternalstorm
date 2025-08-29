@@ -1,4 +1,6 @@
 {
+    "game:anvil-tin": "Tin anvil",
+    "game:block-anvil-tin": "Tin anvil",
     "game:item-saw-tin": "Tin saw",
     "game:item-sawblade-tin": "Tin sawblade",
     "game:itemcraftdesc-sawblade-tin": "Tin smitheded into shape for use as a sawblade."

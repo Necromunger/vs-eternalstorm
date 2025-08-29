@@ -11,7 +11,7 @@
 		heldItemPitchFollow: 0.5,
 		panningDrops: {
 			"@(bonysoil|bonysoil-.*)": [
-				{ type: "item", code: "nugget-nativetin",  chance: { avg: 0.2, var: 0 }  },
+				{ type: "item", code: "nugget-cassiterite",  chance: { avg: 0.1, var: 0 }  },
 				{ type: "item", code: "bone",  chance: { avg: 0.3, var: 0 }  },
 				{ type: "item", code: "flaxfibers",  chance: { avg: 0.15, var: 0 }  },
 				{ type: "item", code: "arrowhead-flint",  chance: { avg: 0.1, var: 0 }  },
@@ -38,7 +38,7 @@
 				{ type: "item", code: "clothes-head-gold-coronet",  chance: { avg: 0.0004, var: 0 }  }
 			],
 			"@(sand|gravel|sandwavy)-.*": [
-				{ type: "item", code: "nugget-cassiterite",  chance: { avg: 0.2, var: 0 }  },
+				{ type: "item", code: "nugget-cassiterite",  chance: { avg: 0.1, var: 0 }  },
 				{ type: "item", code: "stone-{rocktype}",  chance: { avg: 0.2, var: 0 }  },
 				{ type: "item", code: "flint",  chance: { avg: 0.11, var: 0 }  },
 				{ type: "item", code: "clay-blue",  chance: { avg: 0.03, var: 0 }  },
@@ -49,7 +49,6 @@
 				{ type: "item", code: "clearquartz",  chance: { avg: 0.025, var: 0 }  },
 				{ type: "item", code: "gear-rusty",  chance: { avg: 0.006, var: 0 }, dropModbyStat: "rustyGearDropRate", manMade: true  },
 				{ type: "item", code: "nugget-nativegold",  chance: { avg: 0.004, var: 0 }  },
-				{ type: "item", code: "nugget-cassiterite",  chance: { avg: 0.0002, var: 0 }  },
 				{ type: "item", code: "ore-lapislazuli",  chance: { avg: 0.002, var: 0 }  },
 				{ type: "block", code: "metal-parts",  chance: { avg: 0.002, var: 0 }, manMade: true  },
 				{ type: "block", code: "metal-scraps",  chance: { avg: 0.002, var: 0 }, manMade: true  },
