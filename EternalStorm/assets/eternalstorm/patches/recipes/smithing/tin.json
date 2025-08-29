@@ -1,0 +1,14 @@
+[
+    {
+        "file": "game:recipes/smithing/saw",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants/-",
+        "value": "tin"
+    },
+    {
+        "file": "game:recipes/smithing/pickaxe",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants/-",
+        "value": "tin"
+    }
+]

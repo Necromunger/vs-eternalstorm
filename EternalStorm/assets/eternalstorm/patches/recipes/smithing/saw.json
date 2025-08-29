@@ -1,8 +1,0 @@
-[
-    {
-        "file": "game:recipes/smithing/saw",
-        "op": "addmerge",
-        "path": "/ingredient/allowedVariants/-",
-        "value": "tin"
-    }
-]

@@ -1,0 +1,177 @@
+{
+	mainpurpose: "Diggy diggy hole!",
+	code: "pickaxe",
+	storageFlags: 5,
+	attributes: {
+		heldItemPitchFollow: 0.9,
+		handbook: {
+			groupBy: ["pickaxe-*"]
+		},
+		toolrackTransform: {
+			rotation: { y: 2.5, z: -1 },
+			translation: { x: -0.1, y: 0.59 },
+			scale: 1.25,
+		},
+		groundStorageTransform: {
+			translation: { x: 0, y: 0.1, z: -0.105 },
+			rotation: { x: 20, y: 88, z: -87 },
+			scale: 0.88
+		},
+		slotRefillIdentifier: "pickaxe"
+	},
+	behaviors: [{ 
+		name: "GroundStorable",
+		properties: {
+			layout: 'WallHalves',
+			wallOffY: 1,
+			ctrlKey: true,
+			selectionBox: { x1: 0, y1: 0, z1: 0, x2: 1, y2: 0.1, z2: 1 },
+			collisionBox: { x1: 0, y1: 0, z1: 0, x2: 0, y2: 0, z2: 0 },
+		}
+	}],
+	variantgroups: [
+		{ code: "metal", states: ["tin", "copper", "tinbronze", "bismuthbronze", "blackbronze", "gold", "silver",  "iron", "meteoriciron", "steel" ] }
+	],
+	tool: "pickaxe",
+	damagedby: ["blockbreaking", "attacking"],
+	shape: { base: "item/tool/pickaxe" },
+	heldTpHitAnimation: "pickaxe",
+	texturesByType: {
+		"*": {
+			"metal": { base: "block/metal/ingot/{metal}" }
+		}
+	},
+	tooltierbytype: {
+		"*-tin": 1,
+		"*-copper": 2,
+		"*-gold": 2,
+		"*-silver": 2,
+		"*-bismuthbronze": 3,
+		"*-tinbronze": 3,
+		"*-blackbronze": 3,
+		"*-iron": 4,
+		"*-meteoriciron": 4,
+		"*-steel": 5
+	},
+	miningspeedbytype: {
+        "pickaxe-tin": {
+			"ceramic": 1.2,
+			"stone": 2.5,
+			"ore": 2.5,
+			"metal": 3,
+			"ice": 1.2
+		},
+		"pickaxe-copper": {
+			"ceramic": 1.5,
+			"stone": 4,
+			"ore": 4,
+			"metal": 4,
+			"ice": 1.75
+		},
+		"pickaxe-bismuthbronze": {
+			"ceramic": 2,
+			"stone": 5.5,
+			"ore": 5.5,
+			"metal": 5.5,
+			"ice": 2.2
+		},
+		"pickaxe-tinbronze": {
+			"ceramic": 2.25,
+			"stone": 6,
+			"ore": 6,
+			"metal": 6,
+			"ice": 2.3
+		},
+		"pickaxe-gold": {
+			"ceramic": 1.75,
+			"stone": 5,
+			"ore": 5,
+			"metal": 5,
+			"ice": 2
+		},
+		"pickaxe-silver": {
+			"ceramic": 1.75,
+			"stone": 5,
+			"ore": 5,
+			"metal": 5,
+			"ice": 2
+		},
+		"pickaxe-blackbronze": {
+			"ceramic": 2.5,
+			"stone": 6.5,
+			"ore": 6.5,
+			"metal": 6.5,
+			"ice": 2.8
+		},
+		"pickaxe-iron": {
+			"ceramic": 2.75,
+			"stone": 7.5,
+			"ore": 7.5,
+			"metal": 7.5,
+			"ice": 3.5
+		},
+		"pickaxe-meteoriciron": {
+			"ceramic": 3,
+			"stone": 8,
+			"ore": 8,
+			"metal": 8,
+			"ice": 3.75
+		},
+		"pickaxe-steel": {
+			"ceramic": 3.25,
+			"stone": 9,
+			"ore": 9,
+			"metal": 9,
+			"ice": 4.25
+		}
+	},
+	attackpowerbytype: {
+		"pickaxe-tin": 1.1,
+		"pickaxe-copper": 1.25,
+		"pickaxe-bismuthbronze": 1.5,
+		"pickaxe-tinbronze": 1.75,
+		"pickaxe-gold": 1.75,
+		"pickaxe-silver": 1.75,
+		"pickaxe-blackbronze": 2,
+		"pickaxe-iron": 2.25,
+		"pickaxe-meteoriciron": 2.5,
+		"pickaxe-steel": 2.5
+	},
+	durabilitybytype: {
+		"pickaxe-tin": 100,
+		"pickaxe-gold": 150,
+		"pickaxe-silver": 175,
+		"pickaxe-copper": 300,
+		"pickaxe-tinbronze": 450,
+		"pickaxe-bismuthbronze": 500,
+		"pickaxe-blackbronze": 550,
+		"pickaxe-iron": 1000,
+		"pickaxe-meteoriciron": 1300,
+		"pickaxe-steel": 2500
+	},
+	creativeinventory: { "general": ["*"], "items": ["*"], "tools": ["*"] },
+	guiTransform: {
+		translation: { x: 0, y: 0, z: 0 },
+		rotation: { x: -89, y: 47, z: 33 },
+		origin: { x: 0.61, y: 0, z: 0.47 },
+		scale: 1.7
+	},
+	fpHandTransform: {
+		translation: { x: -0.4, y: -0.5, z: 0.6 },
+		rotation: { x: -35, y: 0, z: 85 },
+		origin: { x: 0.1, y: 0.5, z: 0.5 },
+		scale: 2.5
+	},
+	groundTransform: {
+		translation: { x: 0, y: 0, z: 0 },
+		rotation: { x: 0, y: 0, z: 0 },
+		origin: { x: 0.5, y: 0, z: 0.5 },
+		scale: 3.4
+	},
+	tpHandTransform: {
+		translation: { x: -0.87, y: -0.01, z: -0.56 },
+		rotation: { x: -90, y: 0, z: 0 },
+		origin: { x: 0.5, y: 0, z: 0.5 },
+		scale: 0.8
+	}
+}
