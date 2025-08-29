@@ -55,6 +55,55 @@ public class EternalStormModSystem : ModSystem
         sapi = api;
         AddStabilityCommand();
         PatchPlayerCorpse(api);
+
+        sapi.Event.RegisterGameTickListener(OnServerGameTick, 1000);
+    }
+
+    private void OnServerGameTick(float dt)
+    {
+        if (instance == null || instance.api == null || instance.config == null) return;
+        if (instance.api.World.DefaultSpawnPosition == null) return;
+
+        // Per-second reduction at full intensity (t==1). Configurable.
+        double maxReductionPerSecond = instance.config.BorderSanityPerSecond;
+
+        // Iterate online players and apply stability reduction proportional to t
+        foreach (var online in sapi.World.AllOnlinePlayers)
+        {
+            var plEntity = online?.Entity;
+            if (plEntity == null) continue;
+
+            double dx = plEntity.Pos.X - instance.api.World.DefaultSpawnPosition.X;
+            double dz = plEntity.Pos.Z - instance.api.World.DefaultSpawnPosition.Z;
+            double dist = Math.Sqrt(dx * dx + dz * dz);
+
+            if (dist <= instance.config.BorderStart) continue;
+
+            double t;
+            if (dist >= instance.config.BorderEnd) t = 1.0;
+            else
+            {
+                var denom = instance.config.BorderEnd - instance.config.BorderStart;
+                if (denom <= 0) t = 1.0; // fallback to full effect if misconfigured
+                else t = (dist - instance.config.BorderStart) / denom;
+            }
+
+            t = GameMath.Clamp((float)t, 0f, 1f);
+
+            double reductionThisTick = maxReductionPerSecond * t * dt;
+
+            if (reductionThisTick <= 0) continue;
+
+            var be = plEntity.GetBehavior<EntityBehaviorTemporalStabilityAffected>();
+            if (be == null) continue;
+
+            // Reduce own stability and clamp to [0,1]
+            be.OwnStability = GameMath.Clamp(be.OwnStability - reductionThisTick, 0.0, 1.0);
+
+            // Mirror the value to watched attributes so clients see it.
+            plEntity.WatchedAttributes.SetDouble("temporalStability", be.OwnStability);
+            plEntity.WatchedAttributes.MarkPathDirty("temporalStability");
+        }
     }
 
     private void AddStabilityCommand()
@@ -335,6 +384,8 @@ public class EternalStormModConfig
     public float DamageOnGearUse = 0f;
     public int BorderStart = 4000;
     public int BorderEnd = 5000;
+    // How much temporal stability (sanity) is reduced per second at full intensity (t == 1.0)
+    public double BorderSanityPerSecond = 0.01;
 
     public static EternalStormModConfig GetDefault(ICoreAPI api)
     {
