@@ -10,5 +10,11 @@
         "op": "addmerge",
         "path": "/ingredient/allowedVariants/-",
         "value": "tin"
+    },
+    {
+        "file": "game:recipes/smithing/shears",
+        "op": "addmerge",
+        "path": "/ingredient/allowedVariants/-",
+        "value": "tin"
     }
 ]
