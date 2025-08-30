@@ -1,0 +1,10 @@
+{
+	patterns: [
+		{ code: "calm", chance: 0.1, mobSpawnMul: 3, durationHours: { avg: 20, var: 10 }, startTotalHours: 72 },
+		{ code: "low", chance: 0.1, mobSpawnMul: 3, durationHours: { avg: 20, var: 10 }, startTotalHours: 72 },
+		{ code: "medium", chance: 0.3, mobSpawnMul: 4, durationHours: { avg: 20, var: 10 }, startTotalHours: 0 },
+		{ code: "high", chance: 0.3, mobSpawnMul: 5, durationHours: { avg: 14, var: 5}, startTotalHours: 72 },
+		{ code: "veryhigh", chance: 0.2, mobSpawnMul: 6, durationHours: { avg: 11, var: 3}, startTotalHours: 480 },
+		{ code: "apocalyptic", chance: 0.2, mobSpawnMul: 7, durationHours: { avg: 9, var: 2 }, startTotalHours: 720 }
+	]
+}

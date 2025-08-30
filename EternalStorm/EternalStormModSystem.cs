@@ -28,6 +28,8 @@ public class EternalStormModSystem : ModSystem
 
     private Harmony harmony;
 
+    private ModSystemRifts riftSys;
+
     public override void Start(ICoreAPI api)
     {
         instance = this;
@@ -55,7 +57,29 @@ public class EternalStormModSystem : ModSystem
         AddStabilityCommand();
         PatchPlayerCorpse(api);
 
+        // prevent rifts inside BorderStart (safe radius from spawn)
+        riftSys = sapi.ModLoader.GetModSystem<ModSystemRifts>();
+        if (riftSys != null)
+        {
+            riftSys.OnTrySpawnRift += OnTrySpawnRift_BlockInsideBorder;
+        }
+
         sapi.Event.RegisterGameTickListener(OnServerGameTick, 1000);
+    }
+
+    private void OnTrySpawnRift_BlockInsideBorder(BlockPos pos, ref EnumHandling handling)
+    {
+        var spawn = api.World.DefaultSpawnPosition;
+        if (spawn == null) return;
+
+        double dx = pos.X - spawn.X;
+        double dz = pos.Z - spawn.Z;
+        double distSq = dx * dx + dz * dz;
+        double start = config.BorderStart;
+        double startSq = start * start;
+
+        if (distSq <= startSq)
+            handling = EnumHandling.PreventDefault;
     }
 
     private void OnServerGameTick(float dt)
@@ -381,6 +405,7 @@ public class EternalStormModSystem : ModSystem
 
     public override void Dispose()
     {
+        if (riftSys != null) riftSys.OnTrySpawnRift -= OnTrySpawnRift_BlockInsideBorder;
         harmony?.UnpatchAll(Mod.Info.ModID);
     }
 }
@@ -393,7 +418,7 @@ public class EternalStormModConfig
     public int BorderStart = 4000;
     public int BorderEnd = 5000;
     // How much temporal stability (sanity) is reduced per second at full intensity (t == 1.0)
-    public double BorderSanityPerSecond = 0.01;
+    public double BorderSanityPerSecond = 0.005;
 
     public static EternalStormModConfig GetDefault(ICoreAPI api)
     {
