@@ -381,8 +381,8 @@ public class EternalStormModConfig
     public float LowStabilityDamage = 0f;
     public double StabilityPerGear = 1.0f;
     public float DamageOnGearUse = 0f;
-    public int BorderStart = 4000;
-    public int BorderEnd = 5000;
+    public int BorderStart = 2000;
+    public int BorderEnd = 3000;
     // How much temporal stability (sanity) is reduced per second at full intensity (t == 1.0)
     public double BorderSanityPerSecond = 0.005;
 
