@@ -22,7 +22,6 @@ public class EternalStormModSystem : ModSystem
     internal EternalStormModConfig config;
     internal static EternalStormModSystem instance;
 
-    // Properties to access config values
     internal static double StabilityPerGear => instance?.config?.StabilityPerGear ?? 0.30;
     internal static float DamageOnGearUse => instance?.config?.DamageOnGearUse ?? 2f;
     internal static float LowStabilityDamage => instance?.config?.LowStabilityDamage ?? 2f;
@@ -61,48 +60,57 @@ public class EternalStormModSystem : ModSystem
 
     private void OnServerGameTick(float dt)
     {
-        if (instance == null || instance.api == null || instance.config == null) return;
-        if (instance.api.World.DefaultSpawnPosition == null) return;
+        if (instance?.api == null || instance.config == null) return;
+        var spawn = instance.api.World.DefaultSpawnPosition;
+        if (spawn == null) return;
 
-        // Per-second reduction at full intensity (t==1). Configurable.
-        double maxReductionPerSecond = instance.config.BorderSanityPerSecond;
+        double borderStart = instance.config.BorderStart;
+        double borderEnd = instance.config.BorderEnd;
+        if (borderEnd <= borderStart) borderEnd = borderStart + 1; // guard bad config
+        double invSpan = 1.0 / (borderEnd - borderStart);
+        double startRadiusSq = borderStart * borderStart;
+        double endRadiusSq = borderEnd * borderEnd;
+        double maxDrainPerSec = instance.config.BorderSanityPerSecond;
 
-        // Iterate online players and apply stability reduction proportional to t
-        foreach (var online in sapi.World.AllOnlinePlayers)
+        foreach (var player in sapi.World.AllOnlinePlayers)
         {
-            var plEntity = online?.Entity;
-            if (plEntity == null) continue;
+            if (player.WorldData.CurrentGameMode != EnumGameMode.Survival) continue;
 
-            double dx = plEntity.Pos.X - instance.api.World.DefaultSpawnPosition.X;
-            double dz = plEntity.Pos.Z - instance.api.World.DefaultSpawnPosition.Z;
-            double dist = Math.Sqrt(dx * dx + dz * dz);
+            var entity = player?.Entity;
+            if (entity == null) continue;
 
-            if (dist <= instance.config.BorderStart) continue;
+            var stab = entity.GetBehavior<EntityBehaviorTemporalStabilityAffected>();
+            if (stab == null || stab.OwnStability <= 0.0) continue;
 
-            double t;
-            if (dist >= instance.config.BorderEnd) t = 1.0;
+            double dx = entity.Pos.X - spawn.X;
+            double dz = entity.Pos.Z - spawn.Z;
+            double distanceSquared = dx * dx + dz * dz;
+
+            if (distanceSquared <= startRadiusSq) continue; // inside safe zone (no drain)
+
+            double factor;
+            if (distanceSquared >= endRadiusSq)
+            {
+                factor = 1.0; // full drain beyond end radius
+            }
             else
             {
-                var denom = instance.config.BorderEnd - instance.config.BorderStart;
-                if (denom <= 0) t = 1.0; // fallback to full effect if misconfigured
-                else t = (dist - instance.config.BorderStart) / denom;
+                double distance = Math.Sqrt(distanceSquared); // drain partial in band
+                factor = (distance - borderStart) * invSpan;
+                if (factor <= 0) continue;
+                if (factor >= 1) factor = 1.0;
             }
 
-            t = GameMath.Clamp((float)t, 0f, 1f);
+            double reduction = maxDrainPerSec * factor * dt;
+            if (reduction <= 0) continue;
 
-            double reductionThisTick = maxReductionPerSecond * t * dt;
+            double newStability = stab.OwnStability - reduction;
+            if (newStability < 0.0) newStability = 0.0;
 
-            if (reductionThisTick <= 0) continue;
-
-            var be = plEntity.GetBehavior<EntityBehaviorTemporalStabilityAffected>();
-            if (be == null) continue;
-
-            // Reduce own stability and clamp to [0,1]
-            be.OwnStability = GameMath.Clamp(be.OwnStability - reductionThisTick, 0.0, 1.0);
-
-            // Mirror the value to watched attributes so clients see it.
-            plEntity.WatchedAttributes.SetDouble("temporalStability", be.OwnStability);
-            plEntity.WatchedAttributes.MarkPathDirty("temporalStability");
+            // write only when there is something to write
+            stab.OwnStability = newStability;
+            entity.WatchedAttributes.SetDouble("temporalStability", newStability);
+            entity.WatchedAttributes.MarkPathDirty("temporalStability");
         }
     }
 
@@ -362,7 +370,7 @@ public class EternalStormModSystem : ModSystem
         double dx = pos.X - instance.api.World.DefaultSpawnPosition.X;
         double dz = pos.Z - instance.api.World.DefaultSpawnPosition.Z;
         double dist = Math.Sqrt(dx * dx + dz * dz);
-        
+
         if (dist > instance.config.BorderStart)
             return true;
 
