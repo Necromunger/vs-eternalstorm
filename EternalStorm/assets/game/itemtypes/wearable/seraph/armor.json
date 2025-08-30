@@ -518,7 +518,7 @@
 				hungerrate: 0.1
 			},
 			"armor-*-sewn-linen": {
-				healingeffectivness: -0.17,
+				healingeffectivness: -0.1,
 				hungerrate: 0.05
 			},
 			"armor-*-tailored-*-linen": {
@@ -526,27 +526,27 @@
 				hungerrate: 0.05
 			},
 			"armor-*-brigandine-*": {
-				rangedWeaponsAcc: -0.07,
-				rangedWeaponsSpeed: -0.14,
-				healingeffectivness: -0.17,
+				rangedWeaponsAcc: -0.1,
+				rangedWeaponsSpeed: -0.1,
+				healingeffectivness: -0.15,
 				hungerrate: 0.15
 			},
 			"armor-*-chain-*": {
-				rangedWeaponsAcc: -0.03,
-				rangedWeaponsSpeed: -0.06,
+				rangedWeaponsAcc: -0.05,
+				rangedWeaponsSpeed: -0.05,
 				healingeffectivness: -0.1,
 				hungerrate: 0.08
 			},
 			"armor-*-scale-*": {
-				rangedWeaponsAcc: -0.1,
+				rangedWeaponsAcc: -0.2,
 				rangedWeaponsSpeed: -0.2,
-				healingeffectivness: -0.17,
+				healingeffectivness: -0.2,
 				hungerrate: 0.15
 			},
 			"armor-*-plate-*": {
-				rangedWeaponsAcc: -0.1,
-				rangedWeaponsSpeed: -0.2,
-				healingeffectivness: -0.3334,
+				rangedWeaponsAcc: -0.3,
+				rangedWeaponsSpeed: -0.3,
+				healingeffectivness: -0.2,
 				hungerrate: 0.3
 			},
 			"armor-*-antique-blackguard-pristine": {
