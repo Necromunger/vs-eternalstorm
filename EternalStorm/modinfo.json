@@ -6,11 +6,10 @@
         "Necromunger"
     ],
     "description": "Adds soft border to world, going further out lowers sanity",
-    "version": "1.0.7",
+    "version": "1.0.9",
     "requiredonclient": true,
     "requiredonserver": true,
     "dependencies": {
-      "game": "",
-      "playercorpse": ""
+      "game": ""
     }
 }

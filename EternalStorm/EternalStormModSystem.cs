@@ -55,16 +55,15 @@ public class EternalStormModSystem : ModSystem
     {
         sapi = api;
         AddStabilityCommand();
-        PatchPlayerCorpse(api);
 
         // prevent rifts inside BorderStart (safe radius from spawn)
         riftSys = sapi.ModLoader.GetModSystem<ModSystemRifts>();
         if (riftSys != null)
-        {
             riftSys.OnTrySpawnRift += OnTrySpawnRift_BlockInsideBorder;
-        }
 
         sapi.Event.RegisterGameTickListener(OnServerGameTick, 1000);
+
+        sapi.Event.PlayerDeath += OnPlayerDeath;
     }
 
     private void OnTrySpawnRift_BlockInsideBorder(BlockPos pos, ref EnumHandling handling)
@@ -80,6 +79,27 @@ public class EternalStormModSystem : ModSystem
 
         if (distSq <= startSq)
             handling = EnumHandling.PreventDefault;
+    }
+
+    private void OnPlayerDeath(IServerPlayer deadPlayer, DamageSource dmg)
+    {
+        if (sapi == null || deadPlayer == null) return;
+
+        // Grab the vanilla humanoid skull item
+        var skullItem = sapi.World.GetItem(new AssetLocation("game", "clutter-skull/humanoid"));
+        if (skullItem == null) return;
+
+        // Make a skull stack tagged with the player identity
+        var skull = new ItemStack(skullItem, 1);
+        skull.Attributes.SetString("playerName", deadPlayer.PlayerName);
+        skull.Attributes.SetString("playerUid", deadPlayer.PlayerUID);
+
+        // World drop at block-center where the player died
+        BlockPos bpos = deadPlayer.Entity.ServerPos.AsBlockPos;
+        var dropPos = new Vec3d(bpos.X + 0.5, bpos.Y + 0.5, bpos.Z + 0.5);
+
+        // No throw velocity; just place it gently
+        sapi.World.SpawnItemEntity(skull, dropPos, new Vec3d(0, 0, 0));
     }
 
     private void OnServerGameTick(float dt)
@@ -186,63 +206,6 @@ public class EternalStormModSystem : ModSystem
 
         return GameMath.Lerp(baseStab, 0f, t);
     }
-
-    #region Patch Add skull to PlayerCorpse
-    /// <summary>
-    /// Patches PlayerCorpse.Systems.DeathContentManager.TakeContentFromPlayer(IServerPlayer)
-    /// Append a skull to the corpse inventory.
-    /// </summary>
-    private void PatchPlayerCorpse(ICoreServerAPI api)
-    {
-        var targetType = AccessTools.TypeByName("PlayerCorpse.Systems.DeathContentManager");
-        if (targetType == null)
-        {
-            api.Logger.Warning("[EternalStorm] PlayerCorpse DeathContentManager not found. Skipping patch.");
-            return;
-        }
-
-        // private InventoryGeneric TakeContentFromPlayer(IServerPlayer byPlayer)
-        var targetMethod = AccessTools.Method(targetType, "TakeContentFromPlayer", new[] { typeof(IServerPlayer) });
-        if (targetMethod == null)
-        {
-            api.Logger.Warning("[EternalStorm] TakeContentFromPlayer(IServerPlayer) not found. Skipping patch.");
-            return;
-        }
-
-        var postfix = new HarmonyMethod(typeof(EternalStormModSystem).GetMethod(
-            nameof(Post_TakeContentFromPlayer),
-            BindingFlags.Static | BindingFlags.NonPublic));
-
-        harmony.Patch(targetMethod, postfix: postfix);
-
-        api.Logger.Notification("[EternalStorm] Patched PlayerCorpse.TakeContentFromPlayer (postfix).");
-    }
-
-    private static void Post_TakeContentFromPlayer(ref InventoryGeneric __result, IServerPlayer byPlayer)
-    {
-        if (sapi == null || __result == null || byPlayer == null) return;
-
-        var skullItem = sapi.World.GetItem(new AssetLocation("game", "clutter-skull/humanoid"));
-        if (skullItem == null) return;
-
-        var newInv = new InventoryGeneric(__result.Count + 1, $"playercorpse-{byPlayer.PlayerUID}", sapi);
-
-        // Clone original inventory
-        for (int i = 0; i < __result.Count; i++)
-            newInv[i].Itemstack = __result[i].Itemstack;
-
-        var skull = new ItemStack(skullItem, 1);
-        skull.Attributes.SetString("playerName", byPlayer.PlayerName);
-        skull.Attributes.SetString("playerUid", byPlayer.PlayerUID);
-
-        // Put skull into last slot
-        newInv[newInv.Count - 1].Itemstack = skull;
-
-        // Swap the method result
-        __result = newInv;
-    }
-
-    #endregion
 
     #region Patch Temporal Gear Use Damage
 
@@ -405,7 +368,10 @@ public class EternalStormModSystem : ModSystem
 
     public override void Dispose()
     {
+        sapi.Event.PlayerDeath -= OnPlayerDeath;
+
         if (riftSys != null) riftSys.OnTrySpawnRift -= OnTrySpawnRift_BlockInsideBorder;
+
         harmony?.UnpatchAll(Mod.Info.ModID);
     }
 }
