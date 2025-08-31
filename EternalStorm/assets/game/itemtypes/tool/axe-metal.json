@@ -139,7 +139,7 @@
 	},
 	attackRange: 2,
 	tooltierbytype: {
-		"*-tin": 1,
+		"*-tin": 2,
 		"*-scrap": 2,
 		"*-copper": 2,
 		"*-gold": 2,

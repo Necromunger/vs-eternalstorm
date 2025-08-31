@@ -47,7 +47,7 @@
 	},
 	tooltierbytype: {
 		"*-stone": 1,
-		"*-tin": 1,
+		"*-tin": 2,
 		"*-copper": 2,
 		"*-gold": 2,
 		"*-silver": 2,

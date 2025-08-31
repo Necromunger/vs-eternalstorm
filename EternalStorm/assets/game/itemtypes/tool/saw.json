@@ -46,7 +46,7 @@
 		}
 	},
 	tooltierbytype: {
-		"saw-tin": 1,
+		"saw-tin": 2,
 		"saw-copper": 2,
 		"saw-gold": 2,
 		"saw-silver": 2,
