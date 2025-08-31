@@ -60,6 +60,7 @@ public class EternalStormModSystem : ModSystem
         if (riftSys != null)
             riftSys.OnTrySpawnRift += OnTrySpawnRift_BlockInsideBorder;
 
+        sapi.Event.PlayerRespawn += OnPlayerRespawn;
         sapi.Event.PlayerDeath += OnPlayerDeath;
 
         // Server update loop
@@ -79,6 +80,17 @@ public class EternalStormModSystem : ModSystem
 
         if (distSq <= startSq)
             handling = EnumHandling.PreventDefault;
+    }
+
+    private void OnPlayerRespawn(IServerPlayer player)
+    {
+        var ent = player.Entity;
+        var hunger = player.Entity?.GetBehavior<EntityBehaviorHunger>();
+        if (hunger == null) return;
+
+        hunger.MaxSaturation = config.PlayerMaxSaturation;
+        hunger.Saturation = hunger.MaxSaturation;
+        player.Entity?.WatchedAttributes.MarkAllDirty();
     }
 
     private void OnPlayerDeath(IServerPlayer deadPlayer, DamageSource dmg)
@@ -160,7 +172,7 @@ public class EternalStormModSystem : ModSystem
         double dist = entity.Pos.DistanceTo(rift.Position);
         if (dist > config.RiftDamageRadius) return;
 
-        // Linear falloff: 1 at center → 0 at edge
+        // Linear falloff: 1 at center > 0 at edge
         float factor = GameMath.Clamp(1f - (float)(dist / config.RiftDamageRadius), 0f, 1f);
         float dmg = config.RiftDamagePerSecond * delta * factor;
         if (dmg <= 0f) return;
@@ -169,7 +181,7 @@ public class EternalStormModSystem : ModSystem
             new DamageSource
             {
                 DamageTier = 0,
-                Source = EnumDamageSource.Machine,
+                Source = EnumDamageSource.Void,
                 Type = EnumDamageType.Poison
             }, dmg
         );
@@ -204,7 +216,7 @@ public class EternalStormModSystem : ModSystem
 
                 be.OwnStability = GameMath.Clamp(amount, 0.0, 1.0);
                 player.Entity.WatchedAttributes.SetDouble("temporalStability", be.OwnStability);
-                player.Entity.WatchedAttributes.MarkAllDirty();
+                player.Entity.WatchedAttributes.MarkPathDirty("temporalStability");
 
                 return TextCommandResult.Success($"Set {player.PlayerName}'s stability to {be.OwnStability:P0}.");
             });
@@ -268,7 +280,10 @@ public class EternalStormModSystem : ModSystem
     public override void Dispose()
     {
         if (sapi != null)
+        {
+            sapi.Event.PlayerRespawn -= OnPlayerRespawn;
             sapi.Event.PlayerDeath -= OnPlayerDeath;
+        }
 
         if (riftSys != null)
             riftSys.OnTrySpawnRift -= OnTrySpawnRift_BlockInsideBorder;
@@ -291,12 +306,14 @@ public class EternalStormModSystem : ModSystem
 
 public class EternalStormModConfig
 {
+    public float PlayerMaxSaturation = 2000f;
+
     public float LowStabilityDamage = 0f;
     public float LowStabilityHungerCost = 10f;
     public double StabilityPerGearUse = 1f;
     public float DamageOnTemporalGearUse = 0f;
 
-    public float RiftDamageRadius = 8f;
+    public float RiftDamageRadius = 4f;
     public float RiftDamagePerSecond = 3f;
 
     public int BorderStart = 2000;
