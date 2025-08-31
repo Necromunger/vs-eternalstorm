@@ -292,7 +292,8 @@ public class EternalStormModSystem : ModSystem
 public class EternalStormModConfig
 {
     public float LowStabilityDamage = 0f;
-    public double StabilityPerGearUse = 1.0f;
+    public float LowStabilityHungerCost = 10f;
+    public double StabilityPerGearUse = 1f;
     public float DamageOnTemporalGearUse = 0f;
 
     public float RiftDamageRadius = 8f;

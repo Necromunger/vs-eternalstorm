@@ -15,13 +15,23 @@ namespace EternalStorm.Patches;
 public class PatchEntityBehaviorTemporalStabilityAffected
 {
     internal static float LowStabilityDamage => EternalStormModSystem.instance?.config?.LowStabilityDamage ?? 0f;
+    internal static float LowStabilityHungerCost => EternalStormModSystem.instance?.config?.LowStabilityHungerCost ?? 0f;
 
-    public static bool ReceiveDamageShim(Entity ent, DamageSource src, float _)
+    public static bool ReceiveDamageShim(Entity entity, DamageSource src, float _)
     {
-        return ent.ReceiveDamage(src, LowStabilityDamage);
+        // drain hunger
+        var hunger = entity.GetBehavior<EntityBehaviorHunger>();
+        if (hunger != null)
+        {
+            hunger.ConsumeSaturation(LowStabilityHungerCost);
+        }
+
+        // apply damage
+        entity.ReceiveDamage(src, LowStabilityDamage);
+
+        return true;
     }
 
-    // Patch the exact overload explicitly
     [HarmonyPatch("OnGameTick", [typeof(float)])]
     [HarmonyTranspiler]
     static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> ins)
