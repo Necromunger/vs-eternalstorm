@@ -17,8 +17,8 @@ public class StormMapLayer : MapLayer
     // offscreen texture for the ring overlay
     private LoadedTexture ringTex;
 
-    public override string Title => "Storm Ring";
-    public override string LayerGroupCode => "terrain";
+    public override string Title => "Storm Wall";
+    public override string LayerGroupCode => "stormwall";
     public override EnumMapAppSide DataSide => EnumMapAppSide.Client;
     public override bool RequireChunkLoaded => false;
 
