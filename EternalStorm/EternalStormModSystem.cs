@@ -2,6 +2,7 @@
 using HarmonyLib;
 using System;
 using System.Linq;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
@@ -41,6 +42,9 @@ public class EternalStormModSystem : ModSystem
         harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll(typeof(EternalStormModSystem).Assembly);
 
+        // Increase revive timer from EntityBehaviorPlayerRevivable
+        api.World.Config.SetDouble("playerRevivableHourAmount", 2.0); // hours
+
         // Hook to temporal stability to apply border effects
         api.World.RegisterCallback(_ =>
         {
@@ -48,6 +52,12 @@ public class EternalStormModSystem : ModSystem
             sys.OnGetTemporalStability -= GetTemporalStability;
             sys.OnGetTemporalStability += GetTemporalStability;
         }, 0);
+    }
+
+    public override void StartClientSide(ICoreClientAPI capi)
+    {
+        var mapManager = capi.ModLoader.GetModSystem<WorldMapManager>();
+        mapManager.RegisterMapLayer<StormMapLayer>("Stormwall", 1.0);
     }
 
     public override void StartServerSide(ICoreServerAPI api)
@@ -86,10 +96,16 @@ public class EternalStormModSystem : ModSystem
     {
         var ent = player.Entity;
         var hunger = player.Entity?.GetBehavior<EntityBehaviorHunger>();
-        if (hunger == null) return;
+        if (hunger != null)
+        {
+            hunger.MaxSaturation = config.PlayerMaxSaturation;
+            hunger.Saturation = hunger.MaxSaturation;
+        }
 
-        hunger.MaxSaturation = config.PlayerMaxSaturation;
-        hunger.Saturation = hunger.MaxSaturation;
+        var enSanity = player.Entity?.GetBehavior<EntityBehaviorTemporalStabilityAffected>();
+        if (enSanity != null)
+            enSanity.OwnStability = 1;
+
         player.Entity?.WatchedAttributes.MarkAllDirty();
     }
 
