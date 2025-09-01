@@ -70,6 +70,7 @@ public class EternalStormModSystem : ModSystem
         if (riftSys != null)
             riftSys.OnTrySpawnRift += OnTrySpawnRift_BlockInsideBorder;
 
+        sapi.Event.PlayerJoin += OnPlayerJoin;
         sapi.Event.PlayerRespawn += OnPlayerRespawn;
         sapi.Event.PlayerDeath += OnPlayerDeath;
 
@@ -90,6 +91,17 @@ public class EternalStormModSystem : ModSystem
 
         if (distSq <= startSq)
             handling = EnumHandling.PreventDefault;
+    }
+
+    private void OnPlayerJoin(IServerPlayer player)
+    {
+        var ent = player.Entity;
+        var hunger = player.Entity?.GetBehavior<EntityBehaviorHunger>();
+        if (hunger != null && hunger.MaxSaturation != config.PlayerMaxSaturation)
+        {
+            hunger.MaxSaturation = config.PlayerMaxSaturation;
+            player.Entity?.WatchedAttributes.MarkPathDirty("hunger");
+        }
     }
 
     private void OnPlayerRespawn(IServerPlayer player)
@@ -242,8 +254,13 @@ public class EternalStormModSystem : ModSystem
     {
         double dx = x - api.World.DefaultSpawnPosition.X;
         double dz = z - api.World.DefaultSpawnPosition.Z;
+        double distanceSq = dx * dx + dz * dz;
 
-        double factor = BorderFactor(dx * dx + dz * dz);
+        double start = instance.config.BorderStart;
+        double startSq = start * start;
+        if (distanceSq <= startSq && y >= api.World.SeaLevel) return 1.5f;
+
+        double factor = BorderFactor(distanceSq);
         if (factor <= 0.0) return baseStab;
         if (factor >= 1.0) return 0f;
 

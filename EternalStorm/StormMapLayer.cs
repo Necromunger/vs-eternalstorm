@@ -12,7 +12,6 @@ public class StormMapLayer : MapLayer
 {
     private readonly ICoreClientAPI capi;
     private double cx, cz;
-    private double Radius = 2000; // blocks
 
     // offscreen texture for the ring overlay
     private LoadedTexture ringTex;
@@ -53,7 +52,7 @@ public class StormMapLayer : MapLayer
             ctx.Operator = Operator.Over;
 
             // draw the ring onto the offscreen surface
-            DrawRing(ctx, mapElem, Radius);
+            DrawRing(ctx, mapElem, EternalStormModSystem.instance.config.BorderStart);
 
             // upload/update the texture from the Cairo surface
             capi.Gui.LoadOrUpdateCairoTexture(surface, linearMag: false, ref ringTex);
