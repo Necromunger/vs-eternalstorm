@@ -3,7 +3,7 @@
 		ingredientPattern: "_ST	S_T	_ST",
 		ingredients: {
 			"S": { type: "item", code: "stick" },
-			"T": { type: "item", code: "flaxfibers" }
+			"T": { type: "item", code: "flaxfibers", quantity: 2 }
 		},
 		width: 3,
 		height: 3,
