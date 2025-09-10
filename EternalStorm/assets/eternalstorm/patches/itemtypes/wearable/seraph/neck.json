@@ -24,5 +24,13 @@
         "op": "move",
         "path": "/shapeByType/*",
         "frompath": "/temp"
+    },
+
+    // Light HSV for amulet
+    {
+        "file": "game:itemtypes/wearable/seraph/neck",
+        "op": "addmerge",
+        "path": "/lightHsvByType/*-temporal-sealed-tinbronze",
+        "value": [32, 4, 10]
     }
 ]
