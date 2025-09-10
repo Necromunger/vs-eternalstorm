@@ -1,5 +1,4 @@
-﻿using EternalStorm.Patches;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Linq;
 using Vintagestory.API.Client;
@@ -28,12 +27,12 @@ public class EternalStormModSystem : ModSystem
 
     public override void Start(ICoreAPI api)
     {
-        instance = this;
+        // - Init
 
+        instance = this;
         this.api = api;
 
         config = api.LoadModConfig<EternalStormModConfig>(ConfigName) ?? EternalStormModConfig.GetDefault(api);
-        // Sanity check config
         if (config.BorderEnd <= config.BorderStart)
             config.BorderEnd = config.BorderStart + 1;
 
@@ -41,6 +40,8 @@ public class EternalStormModSystem : ModSystem
 
         harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll(typeof(EternalStormModSystem).Assembly);
+
+        // - Custom micro patches
 
         // Increase revive timer from EntityBehaviorPlayerRevivable
         api.World.Config.SetDouble("playerRevivableHourAmount", 2.0); // hours

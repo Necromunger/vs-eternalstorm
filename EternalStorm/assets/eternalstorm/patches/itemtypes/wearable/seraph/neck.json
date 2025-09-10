@@ -1,0 +1,28 @@
+[
+    {
+        "file": "game:itemtypes/wearable/seraph/neck",
+        "op": "addmerge",
+        "path": "/variantgroups/1/states/-",
+        "value": "gear-amulet-temporal-sealed-tinbronze"
+    },
+    {
+        "file": "game:itemtypes/wearable/seraph/neck",
+        "op": "move",
+        "path": "/temp",
+        "frompath": "/shapeByType/*"
+    },
+    {
+        "file": "game:itemtypes/wearable/seraph/neck",
+        "op": "addmerge",
+        "path": "/shapeByType/*-temporal-sealed-tinbronze",
+        "value": {
+            "base": "entity/humanoid/seraph/clothing/neck/gear-amulet-temporal-sealed-tinbronze"
+        }
+    },
+    {
+        "file": "game:itemtypes/wearable/seraph/neck",
+        "op": "move",
+        "path": "/shapeByType/*",
+        "frompath": "/temp"
+    }
+]
