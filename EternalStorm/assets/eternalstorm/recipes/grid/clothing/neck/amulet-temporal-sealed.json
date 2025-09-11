@@ -1,0 +1,21 @@
+[
+	{
+		"ingredientPattern": "FHF,FBF,PTP",
+		"ingredients": {
+            "F": { "type": "item", "code": "game:flaxtwine", "quantity": 2  },
+            "H": { "type": "item", "code": "game:hammer-*", "isTool": true  },
+			"B": { "type": "block", "code": "game:woodbucket" },
+			"P": { "type": "item", "code": "game:metalplate-tinbronze" },
+            "T": { "type": "item", "code": "game:gear-temporal" }
+		},
+		"attributes": {
+			"liquidContainerProps": {
+				"requiresContent": { "type": "item", "code": "game:glueportion-pitch-hot" },
+				"requiresLitres": 0.5
+			}
+		},
+		"width": 3,
+		"height": 3,
+		"output": { "type": "item", "code": "game:clothes-neck-gear-amulet-temporal-sealed-tinbronze"  }
+	}
+]

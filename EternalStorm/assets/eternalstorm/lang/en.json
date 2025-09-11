@@ -18,5 +18,7 @@
     "game:itemcraftdesc-sawblade-tin": "Tin sawblade",
     "game:item-spear-generic-tin": "Tin spear",
     "game:item-spearhead-tin": "Tin spear head",
-    "game:maplayer-stormwall": "Stormwall"
+    "game:maplayer-stormwall": "Stormwall",
+
+    "game:item-clothes-neck-gear-amulet-temporal-sealed-tinbronze": "Tin bronze sealed temporal gear"
 }
