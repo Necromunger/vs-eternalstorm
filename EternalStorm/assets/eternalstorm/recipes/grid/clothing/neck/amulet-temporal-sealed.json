@@ -6,7 +6,7 @@
             "H": { "type": "item", "code": "game:hammer-*", "isTool": true  },
 			"B": { "type": "block", "code": "game:woodbucket" },
 			"P": { "type": "item", "code": "game:metalplate-tinbronze" },
-            "T": { "type": "item", "code": "game:gear-temporal" }
+            "T": { "type": "item", "code": "game:gear-temporal", "recipeAttributes": { "repairMat": { "type":"item", "code": "game:gear-temporal", "stacksize": 1 } }}
 		},
 		"attributes": {
 			"liquidContainerProps": {

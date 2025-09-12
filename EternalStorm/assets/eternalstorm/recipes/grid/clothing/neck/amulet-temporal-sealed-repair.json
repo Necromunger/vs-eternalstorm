@@ -1,0 +1,17 @@
+[
+    {
+        "ingredientPattern": "T,N",
+        "recipeGroup": 2,
+        "ingredients": {
+            "T": { "type": "item", "code": "game:gear-temporal" },
+            "N": { "type": "item", "code": "eternalstorm:clothes-neck-amulet-temporal-sealed-*", "name": "type", "allowedVariants": ["tinbronze"] }
+        },
+        "width": 1,
+        "height": 2,
+        "shapeless": true,
+        "copyAttributesFrom": "N",
+        "averageDurability": false,
+        "name": "temporal necklace repair",
+        "output": { "type": "item", "code": "eternalstorm:clothes-neck-amulet-temporal-sealed-{type}"  }
+    }
+]
