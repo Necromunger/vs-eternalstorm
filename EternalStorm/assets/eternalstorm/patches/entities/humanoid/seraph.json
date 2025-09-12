@@ -1,0 +1,14 @@
+[
+    {
+        "file": "game:entities/humanoid/player",
+        "op": "addmerge",
+        "path": "/client/behaviors",
+        "value": [ {"code": "EntityBehaviorTemporalNecklace"} ]
+    },
+    {
+        "file": "game:entities/humanoid/player",
+        "op": "addmerge",
+        "path": "/server/behaviors",
+        "value": [ {"code": "EntityBehaviorTemporalNecklace"} ]
+    }
+]

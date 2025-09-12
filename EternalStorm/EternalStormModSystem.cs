@@ -8,6 +8,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
+using EternalStorm.Behaviors;
 
 namespace EternalStorm;
 
@@ -37,6 +38,8 @@ public class EternalStormModSystem : ModSystem
             config.BorderEnd = config.BorderStart + 1;
 
         api.RegisterCollectibleBehaviorClass("BehaviorNamedSkull", typeof(BehaviorNamedSkull));
+        api.RegisterCollectibleBehaviorClass("BehaviorTemporalNecklace", typeof(BehaviorTemporalNecklace));
+        api.RegisterEntityBehaviorClass("EntityBehaviorTemporalNecklace", typeof(EntityBehaviorTemporalNecklace));
 
         harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll(typeof(EternalStormModSystem).Assembly);

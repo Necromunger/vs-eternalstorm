@@ -1,10 +1,33 @@
 [
+    // Add unique info behavior
+    {
+        "file": "game:itemtypes/wearable/seraph/neck",
+        "op": "addmerge",
+        "path": "/behaviorsByType",
+        "value": {
+            "*-temporal-sealed-tinbronze": [ {"name": "BehaviorTemporalNecklace"} ]
+        }
+    },
+
+    // Add durability for each temporal amulet
+    {
+        "file": "game:itemtypes/wearable/seraph/neck",
+        "op": "addmerge",
+        "path": "/durabilityByType",
+        "value": {
+            "*-temporal-sealed-tinbronze": 100
+        }
+    },
+
+    // Add each temporal amulet to the variant group
     {
         "file": "game:itemtypes/wearable/seraph/neck",
         "op": "addmerge",
         "path": "/variantgroups/1/states/-",
         "value": "gear-amulet-temporal-sealed-tinbronze"
     },
+
+    // Add shape for each temporal amulet
     {
         "file": "game:itemtypes/wearable/seraph/neck",
         "op": "move",
@@ -32,5 +55,27 @@
         "op": "addmerge",
         "path": "/lightHsvByType/*-temporal-sealed-tinbronze",
         "value": [32, 4, 10]
+    },
+
+    // Add attributes for each temporal amulet
+    {
+        "file": "game:itemtypes/wearable/seraph/neck",
+        "op": "move",
+        "path": "/temp",
+        "frompath": "/attributesByType/*"
+    },
+    {
+        "file": "game:itemtypes/wearable/seraph/neck",
+        "op": "addmerge",
+        "path": "/attributesByType/*-temporal-sealed-tinbronze",
+        "value": {
+            "sanityRestorationAmount": 0.2
+        }
+    },
+    {
+        "file": "game:itemtypes/wearable/seraph/neck",
+        "op": "move",
+        "path": "/attributesByType/*",
+        "frompath": "/temp"
     }
 ]

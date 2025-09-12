@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Vintagestory.API.Common;
 
-namespace EternalStorm;
+namespace EternalStorm.Behaviors;
 
 public class BehaviorNamedSkull : CollectibleBehavior
 {
