@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 
 namespace EternalStorm.Behaviors;
 
@@ -13,7 +14,7 @@ public class BehaviorTemporalNecklace : CollectibleBehavior
         var stack = slot?.Itemstack;
         if (stack == null) return;
 
-        var restoration = collObj.Attributes["sanityRestorationAmount"].AsFloat();
-        dsc.AppendLine($"Sanity restoration per second: {restoration}");
+        var restoration = collObj.Attributes["sanityRestorationAmount"].AsFloat() * 100;
+        dsc.AppendLine($"Sanity per durability: {restoration}%");
     }
 }

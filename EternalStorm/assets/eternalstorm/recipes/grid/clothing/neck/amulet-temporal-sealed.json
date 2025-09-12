@@ -16,6 +16,6 @@
 		},
 		"width": 3,
 		"height": 3,
-		"output": { "type": "item", "code": "game:clothes-neck-gear-amulet-temporal-sealed-tinbronze"  }
+		"output": { "type": "item", "code": "eternalstorm:clothes-neck-amulet-temporal-sealed-tinbronze"  }
 	}
 ]

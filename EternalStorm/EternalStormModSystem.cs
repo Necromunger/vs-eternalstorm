@@ -1,4 +1,6 @@
-﻿using HarmonyLib;
+﻿using EternalStorm.Behaviors;
+using EternalStorm.Items;
+using HarmonyLib;
 using System;
 using System.Linq;
 using Vintagestory.API.Client;
@@ -8,7 +10,6 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
-using EternalStorm.Behaviors;
 
 namespace EternalStorm;
 
@@ -39,6 +40,7 @@ public class EternalStormModSystem : ModSystem
 
         api.RegisterCollectibleBehaviorClass("BehaviorNamedSkull", typeof(BehaviorNamedSkull));
         api.RegisterCollectibleBehaviorClass("BehaviorTemporalNecklace", typeof(BehaviorTemporalNecklace));
+        api.RegisterItemClass("ItemWearableTemporalNecklace", typeof(ItemWearableTemporalNecklace));
         api.RegisterEntityBehaviorClass("EntityBehaviorTemporalNecklace", typeof(EntityBehaviorTemporalNecklace));
 
         harmony = new Harmony(Mod.Info.ModID);
