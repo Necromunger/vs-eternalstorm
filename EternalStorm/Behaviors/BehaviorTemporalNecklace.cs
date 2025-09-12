@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using Vintagestory.API.Common;
-using Vintagestory.API.MathTools;
 
 namespace EternalStorm.Behaviors;
 

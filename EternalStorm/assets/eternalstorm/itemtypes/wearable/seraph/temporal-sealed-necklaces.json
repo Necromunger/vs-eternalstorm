@@ -5,7 +5,8 @@
 		{ code: "category",  states: ["neck"] },
 		{ code: "neck", combine: "SelectiveMultiply", onVariant: "category", 
             states: [
-			    "amulet-temporal-sealed-tinbronze"
+			    "amulet-temporal-sealed-tinbronze",
+			    "amulet-temporal-sealed-electrum"
 		    ] 
         }
 	],
@@ -13,10 +14,12 @@
         { "name": "BehaviorTemporalNecklace" } 
     ],
 	shapeByType: {
-		"*-tinbronze": { "base": "neck/temporal-sealed-necklace-tinbronze" }
+		"*-tinbronze": { "base": "neck/temporal-sealed-necklace-tinbronze" },
+		"*-electrum": { "base": "neck/temporal-sealed-necklace-electrum" }
 	},
     durabilityByType: {
-        "*-tinbronze": 100
+        "*-tinbronze": 100,
+        "*-electrum": 100
     },
 	storageFlags: 128,
 	attributes: {
@@ -29,7 +32,10 @@
 	},
 	attributesByType: {
         "*-tinbronze": {
-            "sanityRestorationAmount": 0.04
+            "sanityRestorationAmount": 0.03
+        },
+		"*-electrum": {
+            "sanityRestorationAmount": 0.06
         },
 		"*":{ displaycaseable: true, onDisplayTransform: {
  			translation: { x: -0.6, y: -1.2, z: 0 },
@@ -44,7 +50,8 @@
 	creativeinventory: { "general": ["*"], "items": ["*"], "clothing": ["*"] },
 	renderAlphaTest: 0.25,
 	lightHsvByType: {
-		"*-tinbronze": [32, 4, 10]
+		"*-tinbronze": [32, 4, 8],
+		"*-electrum": [32, 4, 14]
 	},
 	fpHandTransform: {
 		translation: { x: 0.2, y: -2.5, z: -0.9 },

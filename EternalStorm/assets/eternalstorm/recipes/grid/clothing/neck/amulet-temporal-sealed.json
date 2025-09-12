@@ -5,7 +5,7 @@
             "F": { "type": "item", "code": "game:flaxtwine", "quantity": 2  },
             "H": { "type": "item", "code": "game:hammer-*", "isTool": true  },
 			"B": { "type": "block", "code": "game:woodbucket" },
-			"P": { "type": "item", "code": "game:metalplate-tinbronze" },
+			"P": { "type": "item", "code": "game:metalplate-*", "name": "metal", "allowedVariants": ["tinbronze", "electrum"] },
             "T": { "type": "item", "code": "game:gear-temporal" }
 		},
 		"attributes": {
@@ -16,6 +16,6 @@
 		},
 		"width": 3,
 		"height": 3,
-		"output": { "type": "item", "code": "eternalstorm:clothes-neck-amulet-temporal-sealed-tinbronze"  }
+		"output": { "type": "item", "code": "eternalstorm:clothes-neck-amulet-temporal-sealed-{metal}"  }
 	}
 ]
