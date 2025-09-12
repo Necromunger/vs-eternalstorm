@@ -9,7 +9,7 @@
         "width": 1,
         "height": 2,
         "shapeless": true,
-        "copyAttributesFrom": "N",
+        "copyAttributesFrom": "T",
         "averageDurability": false,
         "name": "temporal necklace repair",
         "output": { "type": "item", "code": "eternalstorm:clothes-neck-amulet-temporal-sealed-{type}"  }
