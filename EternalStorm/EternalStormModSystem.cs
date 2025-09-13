@@ -30,7 +30,6 @@ public class EternalStormModSystem : ModSystem
     public override void Start(ICoreAPI api)
     {
         // - Init
-
         instance = this;
         this.api = api;
 
@@ -39,9 +38,6 @@ public class EternalStormModSystem : ModSystem
             config.BorderEnd = config.BorderStart + 1;
 
         api.RegisterCollectibleBehaviorClass("BehaviorNamedSkull", typeof(BehaviorNamedSkull));
-        api.RegisterCollectibleBehaviorClass("BehaviorTemporalNecklace", typeof(BehaviorTemporalNecklace));
-        api.RegisterItemClass("ItemWearableTemporalNecklace", typeof(ItemWearableTemporalNecklace));
-        api.RegisterEntityBehaviorClass("EntityBehaviorTemporalNecklace", typeof(EntityBehaviorTemporalNecklace));
 
         harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll(typeof(EternalStormModSystem).Assembly);
@@ -101,7 +97,6 @@ public class EternalStormModSystem : ModSystem
 
     private void OnPlayerJoin(IServerPlayer player)
     {
-        var ent = player.Entity;
         var hunger = player.Entity?.GetBehavior<EntityBehaviorHunger>();
         if (hunger != null && hunger.MaxSaturation != config.PlayerMaxSaturation)
         {
@@ -112,7 +107,6 @@ public class EternalStormModSystem : ModSystem
 
     private void OnPlayerRespawn(IServerPlayer player)
     {
-        var ent = player.Entity;
         var hunger = player.Entity?.GetBehavior<EntityBehaviorHunger>();
         if (hunger != null)
         {
@@ -349,7 +343,7 @@ public class EternalStormModConfig
 
     public float LowStabilityDamage = 0f;
     public float LowStabilityHungerCost = 10f;
-    public double StabilityPerGearUse = 0.5f;
+    public double StabilityPerGearUse = 1f;
     public float DamageOnTemporalGearUse = 0f;
 
     public float RiftDamageRadius = 4f;
