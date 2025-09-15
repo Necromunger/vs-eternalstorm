@@ -1,7 +1,7 @@
 ﻿using EternalStorm.Behaviors;
-using EternalStorm.Items;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -65,7 +65,12 @@ public class EternalStormModSystem : ModSystem
     public override void StartServerSide(ICoreServerAPI api)
     {
         sapi = api;
+
+        PurgeChunks(config.BorderStart);
+
         AddStabilityCommand();
+        AddRegenerateCommand();
+        AddSetSeedCommand();
 
         // Event callbacks
         riftSys = sapi.ModLoader.GetModSystem<ModSystemRifts>();
@@ -250,6 +255,42 @@ public class EternalStormModSystem : ModSystem
             });
     }
 
+    private void AddRegenerateCommand()
+    {
+        api.ChatCommands
+            .GetOrCreate("regenerate")
+            .RequiresPrivilege(Privilege.controlserver)
+            .HandleWith(args =>
+            {
+                PurgeChunks(config.BorderStart);
+                return TextCommandResult.Success($"Regenerate");
+            });
+    }
+
+
+    private void AddSetSeedCommand()
+    {
+        api.ChatCommands
+            .GetOrCreate("setseed")
+            .WithDescription("Updates server seed")
+            .RequiresPrivilege(Privilege.controlserver)
+            .WithArgs(api.ChatCommands.Parsers.Int("seed"))
+            .HandleWith(args =>
+            {
+                var seed = (int)args.Parsers[0].GetValue();
+
+                SetWorldSeed(sapi, seed);
+                return TextCommandResult.Success($"Changed world seed to {seed}.");
+            });
+    }
+
+    public static void SetWorldSeed(ICoreServerAPI sapi, int newSeed)
+    {
+        if (sapi?.WorldManager?.SaveGame == null) return;
+        sapi.WorldManager.SaveGame.Seed = newSeed;
+        sapi.Logger.Notification($"World seed set to {newSeed}");
+    }
+
     public float GetTemporalStability(float baseStab, double x, double y, double z)
     {
         double dx = x - api.World.DefaultSpawnPosition.X;
@@ -308,6 +349,69 @@ public class EternalStormModSystem : ModSystem
         double start = instance.config.BorderStart;
 
         return distSq <= start * start;
+    }
+
+    /// <summary>
+    /// Deletes ALL chunk columns whose centers lie beyond the given radius (in blocks) from the world's default spawn.
+    /// This removes chunk data from the save, unloads it, and deletes all entities in those chunks.
+    /// On re-exploration, the world generator will rebuild them fresh.
+    /// </summary>
+    public void PurgeChunks(float radiusBlocks)
+    {
+        var wm = sapi.WorldManager;
+        int chunkSize = wm.ChunkSize;
+        var spawn = new BlockPos(wm.MapSizeX / 2, 0, wm.MapSizeZ / 2);
+        double r2 = radiusBlocks * radiusBlocks;
+
+        // Temporarily stop automatic gen/sending while we purge to avoid thrash
+        wm.AutoGenerateChunks = false;
+        wm.SendChunks = false;
+
+        int deleted = 0;
+        int considered = 0;
+
+        try
+        {
+            // Snapshot of actually loaded mapchunk columns (2D)
+            // Warning in API: clone locks the dict briefly; do this sparingly.
+            Dictionary<long, IMapChunk> loadedMapChunks = wm.AllLoadedMapchunks;
+
+            foreach (var kvp in loadedMapChunks)
+            {
+                considered++;
+
+                // Convert packed 2D index -> (cx, cz)
+                Vec2i cc = wm.MapChunkPosFromChunkIndex2D(kvp.Key);
+                int cx = cc.X;
+                int cz = cc.Y;
+
+                // Column center in block coords
+                double cxCenter = cx * (double)chunkSize + (chunkSize * 0.5);
+                double czCenter = cz * (double)chunkSize + (chunkSize * 0.5);
+
+                double dx = cxCenter - spawn.X;
+                double dz = czCenter - spawn.Z;
+                double dist2 = dx * dx + dz * dz;
+
+                if (dist2 > r2)
+                {
+                    // Deletes from disk, unloads, removes entities, and deletes corresponding mapchunk
+                    wm.DeleteChunkColumn(cx, cz);
+                    deleted++;
+                }
+            }
+
+            sapi.Logger.Notification($"[PurgeLoadedColumns] Considered {considered} loaded columns; deleted {deleted} beyond radius {radiusBlocks}.");
+        }
+        catch (Exception e)
+        {
+            sapi.Logger.Error($"[PurgeLoadedColumns] Error: {e}");
+        }
+        finally
+        {
+            wm.AutoGenerateChunks = true;
+            wm.SendChunks = true;
+        }
     }
 
     public override void Dispose()
