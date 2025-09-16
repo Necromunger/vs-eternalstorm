@@ -24,7 +24,6 @@ public class EternalStormModSystem : ModSystem
 
     internal EternalStormModConfig config;
     internal static EternalStormModSystem instance;
-    internal string seedkey = "eternalstorm.seed";
 
     public override void Start(ICoreAPI api)
     {
@@ -53,6 +52,9 @@ public class EternalStormModSystem : ModSystem
             sys.OnGetTemporalStability -= GetTemporalStability;
             sys.OnGetTemporalStability += GetTemporalStability;
         }, 0);
+
+        api.Event.OnGetClimate += OnGetClimate;
+        api.Event.OnGetWindSpeed += OnGetWindSpeed;
     }
 
     public override void StartClientSide(ICoreClientAPI capi)
@@ -111,10 +113,7 @@ public class EternalStormModSystem : ModSystem
     {
         var hunger = player.Entity?.GetBehavior<EntityBehaviorHunger>();
         if (hunger != null)
-        {
-            hunger.MaxSaturation = config.PlayerMaxSaturation;
             hunger.Saturation = hunger.MaxSaturation;
-        }
 
         var enSanity = player.Entity?.GetBehavior<EntityBehaviorTemporalStabilityAffected>();
         if (enSanity != null)
@@ -142,6 +141,35 @@ public class EternalStormModSystem : ModSystem
 
         // Spawn skull at body location
         sapi.World.SpawnItemEntity(skull, dropPos, new Vec3d(0, 0, 0));
+    }
+
+    private void OnGetClimate(ref ClimateCondition climate, BlockPos pos, EnumGetClimateMode mode = EnumGetClimateMode.NowValues, double totalDays = 0.0)
+    {
+        if (climate == null) return;
+
+        if (BlockInSafeZone(pos))
+        {
+            climate.Rainfall = 0;
+            climate.RainCloudOverlay = 0;
+            climate.WorldgenRainfall = 0;
+        }
+        else
+        {
+            climate.Rainfall = 1;
+            climate.RainCloudOverlay = 1;
+            climate.WorldgenRainfall = 1;
+            climate.Temperature = -3;
+            climate.WorldGenTemperature = -3;
+        }
+    }
+
+    public void OnGetWindSpeed(Vec3d pos, ref Vec3d windSpeed)
+    {
+        if (!BlockInSafeZone(pos.AsBlockPos))
+        {
+            windSpeed.X = 1 + (sapi.World.Rand.NextDouble() - 0.5) * 1;
+            windSpeed.Z = 0.5 + (sapi.World.Rand.NextDouble() - 0.5) * 1;
+        }
     }
 
     private void ServerUpdate(float delta)
@@ -263,7 +291,6 @@ public class EternalStormModSystem : ModSystem
                 return TextCommandResult.Success($"Regenerate");
             });
     }
-
 
     private void AddSetSeedCommand()
     {
