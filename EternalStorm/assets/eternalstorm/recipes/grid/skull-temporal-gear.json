@@ -1,9 +1,0 @@
-{
-    "ingredientPattern": "S",
-    "ingredients": {
-        "S": { "type": "item", "code": "game:clutter-skull/humanoid" }
-    },
-    "width": 1,
-    "height": 1,
-    "output": { "type": "item", "code": "game:gear-temporal", "quantity": 1 }
-}
