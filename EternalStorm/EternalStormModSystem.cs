@@ -158,8 +158,13 @@ public class EternalStormModSystem : ModSystem
             climate.Rainfall = 1;
             climate.RainCloudOverlay = 1;
             climate.WorldgenRainfall = 1;
-            climate.Temperature = -3;
-            climate.WorldGenTemperature = -3;
+
+            // set cap on temperature in storm to -3c
+            if (climate.Temperature > -3f)
+                climate.Temperature = -3;
+
+            if (climate.WorldGenTemperature > -3f)
+                climate.WorldGenTemperature = -3;
         }
     }
 
