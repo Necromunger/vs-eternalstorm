@@ -170,10 +170,12 @@ public class EternalStormModSystem : ModSystem
 
     public void OnGetWindSpeed(Vec3d pos, ref Vec3d windSpeed)
     {
+        if (api?.World == null) return;
+
         if (!BlockInSafeZone(pos.AsBlockPos))
         {
-            windSpeed.X = 1 + (sapi.World.Rand.NextDouble() - 0.5) * 1;
-            windSpeed.Z = 0.5 + (sapi.World.Rand.NextDouble() - 0.5) * 1;
+            windSpeed.X = 1 + (api.World.Rand.NextDouble() - 0.5) * 1;
+            windSpeed.Z = 0.5 + (api.World.Rand.NextDouble() - 0.5) * 1;
         }
     }
 
