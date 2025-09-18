@@ -1,6 +1,7 @@
 using ProtoBuf;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
@@ -16,6 +17,7 @@ public class BehaviorClassReset : CollectibleBehavior
     internal ICoreServerAPI sapi;
     internal CharacterSystem characterSystem;
     internal INetworkChannel channel;
+    internal SimpleParticleProperties useParticle;
 
     public override void OnLoaded(ICoreAPI api)
     {
@@ -27,6 +29,18 @@ public class BehaviorClassReset : CollectibleBehavior
         {
             var _clientChannel = api.Network.GetChannel(ChannelName) as IClientNetworkChannel;
             _clientChannel.SetMessageHandler<ClassResetPacket>(OnClassResetPacketFromServer);
+
+            // setup particle
+            useParticle = new SimpleParticleProperties(1f, 1f, ColorUtil.ToRgba(50, 220, 220, 220), new Vec3d(), new Vec3d(), new Vec3f(-0.1f, -0.1f, -0.1f), new Vec3f(0.1f, 0.1f, 0.1f), 1.5f, 0f, 0.5f, 0.75f);
+            useParticle.SizeEvolve = EvolvingNatFloat.create(EnumTransformFunction.QUADRATIC, -0.6f);
+            useParticle.AddPos.Set(0.1, 0.1, 0.1);
+            useParticle.addLifeLength = 0.5f;
+            useParticle.RandomVelocityChange = true;
+            useParticle.MinQuantity = 200f;
+            useParticle.AddQuantity = 50f;
+            useParticle.MinSize = 0.2f;
+            useParticle.ParticleModel = EnumParticleModel.Quad;
+            useParticle.OpacityEvolve = EvolvingNatFloat.create(EnumTransformFunction.LINEAR, -150f);
         }
     }
 
@@ -56,6 +70,17 @@ public class BehaviorClassReset : CollectibleBehavior
 
             slot?.TakeOut(1);
             slot?.MarkDirty();
+        }
+
+        if (capi != null)
+        {
+            // play sound
+            byEntity.World.PlaySoundAt(new AssetLocation("sounds/player/coin6"), byEntity, (byEntity as EntityPlayer)?.Player, false, 12f, 1f);
+            // spawn particle
+            useParticle.MinPos = byEntity.SidedPos.XYZ.Add(byEntity.SelectionBox.X1, 0.0, byEntity.SelectionBox.Z1);
+            useParticle.AddPos = new Vec3d(byEntity.SelectionBox.XSize, byEntity.SelectionBox.Y2, byEntity.SelectionBox.ZSize);
+            useParticle.Color = ColorUtil.ReverseColorBytes(ColorUtil.HsvToRgba(110 + capi.World.Rand.Next(15), 180, 100 + capi.World.Rand.Next(50), 150));
+            capi.World.SpawnParticles(useParticle);
         }
     }
 }
