@@ -21,5 +21,5 @@
     "game:maplayer-stormwall": "Stormwall",
 
     "eternalstorm:item-book-classreset": "Grimorium Profession",
-    "eternalstorm:itemdesc-book-classreset": "A forbidden tome that reshapes your skills to your chosen profession."
+    "eternalstorm:itemdesc-book-classreset": "A forbidden tome that reshapes your skills to your chosen profession.<br>Will also reset all clothing to the chosen profession's."
 }
