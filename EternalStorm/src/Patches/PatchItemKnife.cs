@@ -13,8 +13,8 @@ namespace EternalStorm.Patches;
 [HarmonyPatch(typeof(ItemKnife))]
 class PatchItemKnife
 {
-    public static double StabilityPerGear => EternalStormModSystem.instance?.config?.StabilityPerGearUse ?? 1f;
-    public static float DamageOnGearUse => EternalStormModSystem.instance?.config?.DamageOnTemporalGearUse ?? 0f;
+    public static double StabilityPerGear => EternalStormModSystem.Instance?.config?.StabilityPerGearUse ?? 1f;
+    public static float DamageOnGearUse => EternalStormModSystem.Instance?.config?.DamageOnTemporalGearUse ?? 0f;
 
     [HarmonyPatch(nameof(ItemKnife.OnHeldInteractStep))]
     [HarmonyTranspiler]

@@ -52,7 +52,7 @@ public class StormMapLayer : MapLayer
             ctx.Operator = Operator.Over;
 
             // draw the ring onto the offscreen surface
-            DrawRing(ctx, mapElem, EternalStormModSystem.instance.config.BorderStart);
+            DrawRing(ctx, mapElem, EternalStormModSystem.Instance.config.BorderStart);
 
             // upload/update the texture from the Cairo surface
             capi.Gui.LoadOrUpdateCairoTexture(surface, linearMag: false, ref ringTex);

@@ -14,8 +14,8 @@ namespace EternalStorm.Patches;
 [HarmonyPatch(typeof(EntityBehaviorTemporalStabilityAffected))]
 public class PatchEntityBehaviorTemporalStabilityAffected
 {
-    internal static float LowStabilityDamage => EternalStormModSystem.instance?.config?.LowStabilityDamage ?? 0f;
-    internal static float LowStabilityHungerCost => EternalStormModSystem.instance?.config?.LowStabilityHungerCost ?? 0f;
+    internal static float LowStabilityDamage => EternalStormModSystem.Instance?.config?.LowStabilityDamage ?? 0f;
+    internal static float LowStabilityHungerCost => EternalStormModSystem.Instance?.config?.LowStabilityHungerCost ?? 0f;
 
     public static bool ReceiveDamageShim(Entity entity, DamageSource src, float _)
     {

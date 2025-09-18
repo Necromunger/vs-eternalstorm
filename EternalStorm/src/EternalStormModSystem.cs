@@ -1,6 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using EternalStorm.Behaviors;
 using HarmonyLib;
+using System;
+using System.Linq;
+using System.Threading.Channels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -8,27 +10,25 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
-using EternalStorm.Behaviors;
 
 namespace EternalStorm;
 
 public class EternalStormModSystem : ModSystem
 {
+    public static EternalStormModSystem Instance;
     public static string ConfigName = "EternalStormConfig.json";
 
-    private ICoreAPI api;
-    private static ICoreServerAPI sapi;
-
+    public ICoreAPI api;
+    public  ICoreServerAPI sapi;
     private Harmony harmony;
     private ModSystemRifts riftSys;
 
     internal EternalStormModConfig config;
-    internal static EternalStormModSystem instance;
 
     public override void Start(ICoreAPI api)
     {
         // - Init
-        instance = this;
+        Instance = this;
         this.api = api;
 
         config = api.LoadModConfig<EternalStormModConfig>(ConfigName) ?? EternalStormModConfig.GetDefault(api);
@@ -36,6 +36,7 @@ public class EternalStormModSystem : ModSystem
             config.BorderEnd = config.BorderStart + 1;
 
         api.RegisterCollectibleBehaviorClass("BehaviorNamedSkull", typeof(BehaviorNamedSkull));
+        api.RegisterCollectibleBehaviorClass("BehaviorClassReset", typeof(BehaviorClassReset));
 
         harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll(typeof(EternalStormModSystem).Assembly);
@@ -48,9 +49,9 @@ public class EternalStormModSystem : ModSystem
         // Hook to temporal stability to apply border effects
         api.World.RegisterCallback(_ =>
         {
-            var sys = api.ModLoader.GetModSystem<SystemTemporalStability>();
-            sys.OnGetTemporalStability -= GetTemporalStability;
-            sys.OnGetTemporalStability += GetTemporalStability;
+            var sysStability = api.ModLoader.GetModSystem<SystemTemporalStability>();
+            sysStability.OnGetTemporalStability -= GetTemporalStability;
+            sysStability.OnGetTemporalStability += GetTemporalStability;
         }, 0);
 
         api.Event.OnGetClimate += OnGetClimate;
@@ -59,6 +60,8 @@ public class EternalStormModSystem : ModSystem
 
     public override void StartClientSide(ICoreClientAPI capi)
     {
+        api.Network.RegisterChannel(BehaviorClassReset.ChannelName).RegisterMessageType<ClassResetPacket>();
+
         var mapManager = capi.ModLoader.GetModSystem<WorldMapManager>();
         mapManager.RegisterMapLayer<StormMapLayer>("Stormwall", 1.0);
     }
@@ -66,6 +69,8 @@ public class EternalStormModSystem : ModSystem
     public override void StartServerSide(ICoreServerAPI api)
     {
         sapi = api;
+
+        api.Network.RegisterChannel(BehaviorClassReset.ChannelName).RegisterMessageType<ClassResetPacket>();
 
         AddStabilityCommand();
         AddRegenerateCommand();
@@ -212,7 +217,7 @@ public class EternalStormModSystem : ModSystem
         double factor = BorderFactor(distanceSq);
         if (factor <= 0.0) return;
 
-        double reduction = instance.config.BorderSanityPerSecond * factor * delta;
+        double reduction = Instance.config.BorderSanityPerSecond * factor * delta;
         if (reduction <= 0) return;
 
         double newStability = stab.OwnStability - reduction;
@@ -328,7 +333,7 @@ public class EternalStormModSystem : ModSystem
         double dz = z - api.World.DefaultSpawnPosition.Z;
         double distanceSq = dx * dx + dz * dz;
 
-        double start = instance.config.BorderStart;
+        double start = Instance.config.BorderStart;
         double startSq = start * start;
         if (distanceSq <= startSq && y >= api.World.SeaLevel) return 1.5f;
 
@@ -344,10 +349,10 @@ public class EternalStormModSystem : ModSystem
     /// </summary>
     public static double BorderFactor(double distanceSq)
     {
-        if (instance == null || instance.config == null) return 0.0;
+        if (Instance == null || Instance.config == null) return 0.0;
 
-        double start = instance.config.BorderStart;
-        double end = instance.config.BorderEnd;
+        double start = Instance.config.BorderStart;
+        double end = Instance.config.BorderEnd;
         double startSq = start * start;
         double endSq = end * end;
 
@@ -362,22 +367,22 @@ public class EternalStormModSystem : ModSystem
 
     public static bool EntityInSafeZone(EntityPos pos)
     {
-        if (instance == null || instance.api == null || instance.api.World == null || instance.api.World.DefaultSpawnPosition == null || instance.config == null)
+        if (Instance == null || Instance.api == null || Instance.api.World == null || Instance.api.World.DefaultSpawnPosition == null || Instance.config == null)
             return false;
 
-        return pos.InRangeOf(instance.api.World.DefaultSpawnPosition, instance.config.BorderStart);
+        return pos.InRangeOf(Instance.api.World.DefaultSpawnPosition, Instance.config.BorderStart);
     }
 
     public static bool BlockInSafeZone(BlockPos pos)
     {
         // Return true when the block is inside the configured safe zone.
-        if (instance == null || instance.api == null || instance.api.World == null || instance.api.World.DefaultSpawnPosition == null || instance.config == null)
+        if (Instance == null || Instance.api == null || Instance.api.World == null || Instance.api.World.DefaultSpawnPosition == null || Instance.config == null)
             return false;
 
-        double dx = pos.X - instance.api.World.DefaultSpawnPosition.X;
-        double dz = pos.Z - instance.api.World.DefaultSpawnPosition.Z;
+        double dx = pos.X - Instance.api.World.DefaultSpawnPosition.X;
+        double dz = pos.Z - Instance.api.World.DefaultSpawnPosition.Z;
         double distSq = dx * dx + dz * dz;
-        double start = instance.config.BorderStart;
+        double start = Instance.config.BorderStart;
 
         return distSq <= start * start;
     }
@@ -404,7 +409,7 @@ public class EternalStormModSystem : ModSystem
         harmony?.UnpatchAll(Mod.Info.ModID);
 
         // Clear static references
-        instance = null;
+        Instance = null;
         sapi = null;
     }
 }
