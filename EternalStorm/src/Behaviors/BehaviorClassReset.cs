@@ -1,4 +1,6 @@
+using HarmonyLib;
 using ProtoBuf;
+using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -15,8 +17,10 @@ public class BehaviorClassReset : CollectibleBehavior
 
     internal ICoreClientAPI capi;
     internal ICoreServerAPI sapi;
+
     internal CharacterSystem characterSystem;
-    internal INetworkChannel channel;
+    internal Type customCharacterType;
+
     internal SimpleParticleProperties useParticle;
 
     public override void OnLoaded(ICoreAPI api)
@@ -24,6 +28,7 @@ public class BehaviorClassReset : CollectibleBehavior
         capi = api as ICoreClientAPI;
         sapi = api as ICoreServerAPI;
         characterSystem = api.ModLoader.GetModSystem<CharacterSystem>();
+        customCharacterType = AccessTools.TypeByName("PlayerModelLib.GuiDialogCreateCustomCharacter");
 
         if (api.Side == EnumAppSide.Client)
         {
@@ -46,6 +51,20 @@ public class BehaviorClassReset : CollectibleBehavior
 
     public void OnClassResetPacketFromServer(ClassResetPacket packet)
     {
+        if (customCharacterType != null)
+        {
+            // Try to create an instance of the custom dialog
+            var ctor = customCharacterType.GetConstructor(new Type[] { typeof(ICoreClientAPI), characterSystem.GetType() });
+            if (ctor != null)
+            {
+                var customDlg = ctor.Invoke(new object[] { capi, characterSystem });
+                var prepAndOpen = customCharacterType.GetMethod("PrepAndOpen");
+                prepAndOpen?.Invoke(customDlg, null);
+                return;
+            }
+        }
+        
+        // Fallback to default dialog
         var createCharDlg = new GuiDialogCreateCharacter(capi, characterSystem);
         createCharDlg.PrepAndOpen();
     }
