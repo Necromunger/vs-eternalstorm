@@ -18,8 +18,5 @@
     "game:itemcraftdesc-sawblade-tin": "Tin sawblade",
     "game:item-spear-generic-tin": "Tin spear",
     "game:item-spearhead-tin": "Tin spear head",
-    "game:maplayer-stormwall": "Stormwall",
-
-    "eternalstorm:item-book-classreset": "Grimorium Profession",
-    "eternalstorm:itemdesc-book-classreset": "A forbidden tome that reshapes your skills to your chosen profession.<br>Will also reset all clothing to the chosen profession's."
+    "game:maplayer-stormwall": "Stormwall"
 }

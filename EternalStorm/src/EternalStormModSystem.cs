@@ -2,7 +2,6 @@
 using HarmonyLib;
 using System;
 using System.Linq;
-using System.Threading.Channels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -21,7 +20,8 @@ public class EternalStormModSystem : ModSystem
     public ICoreAPI api;
     public  ICoreServerAPI sapi;
     private Harmony harmony;
-    private ModSystemRifts riftSys;
+    private ModSystemRifts riftSystem;
+    private StoryStructuresSpawnConditions storySystem;
 
     internal EternalStormModConfig config;
 
@@ -36,7 +36,6 @@ public class EternalStormModSystem : ModSystem
             config.BorderEnd = config.BorderStart + 1;
 
         api.RegisterCollectibleBehaviorClass("BehaviorNamedSkull", typeof(BehaviorNamedSkull));
-        api.RegisterCollectibleBehaviorClass("BehaviorClassReset", typeof(BehaviorClassReset));
 
         harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll(typeof(EternalStormModSystem).Assembly);
@@ -60,7 +59,7 @@ public class EternalStormModSystem : ModSystem
 
     public override void StartClientSide(ICoreClientAPI capi)
     {
-        api.Network.RegisterChannel(BehaviorClassReset.ChannelName).RegisterMessageType<ClassResetPacket>();
+        storySystem = capi.ModLoader.GetModSystem<StoryStructuresSpawnConditions>();
 
         var mapManager = capi.ModLoader.GetModSystem<WorldMapManager>();
         mapManager.RegisterMapLayer<StormMapLayer>("Stormwall", 1.0);
@@ -70,16 +69,16 @@ public class EternalStormModSystem : ModSystem
     {
         sapi = api;
 
-        api.Network.RegisterChannel(BehaviorClassReset.ChannelName).RegisterMessageType<ClassResetPacket>();
-
         AddStabilityCommand();
         AddRegenerateCommand();
         AddSetSeedCommand();
 
+        storySystem = sapi.ModLoader.GetModSystem<StoryStructuresSpawnConditions>();
+
         // Event callbacks
-        riftSys = sapi.ModLoader.GetModSystem<ModSystemRifts>();
-        if (riftSys != null)
-            riftSys.OnTrySpawnRift += OnTrySpawnRift_BlockInsideBorder;
+        riftSystem = sapi.ModLoader.GetModSystem<ModSystemRifts>();
+        if (riftSystem != null)
+            riftSystem.OnTrySpawnRift += OnTrySpawnRift_BlockInsideBorder;
 
         sapi.Event.PlayerJoin += OnPlayerJoin;
         sapi.Event.PlayerRespawn += OnPlayerRespawn;
@@ -124,6 +123,10 @@ public class EternalStormModSystem : ModSystem
         if (enSanity != null)
             enSanity.OwnStability = 1;
 
+        // respawning in the storm gives 0 saturation
+        if (!EntityInSafeZone(player.Entity.ServerPos))
+            hunger.Saturation = 0;
+
         player.Entity?.WatchedAttributes.MarkAllDirty();
     }
 
@@ -152,13 +155,7 @@ public class EternalStormModSystem : ModSystem
     {
         if (climate == null) return;
 
-        if (BlockInSafeZone(pos))
-        {
-            climate.Rainfall = 0;
-            climate.RainCloudOverlay = 0;
-            climate.WorldgenRainfall = 0;
-        }
-        else
+        if (!BlockInSafeZone(pos))
         {
             climate.Rainfall = 1;
             climate.RainCloudOverlay = 1;
@@ -235,7 +232,7 @@ public class EternalStormModSystem : ModSystem
         if (sapi == null || entity == null || !entity.Alive) return;
 
         Vec3d pos = player.Entity.Pos.XYZ;
-        Rift rift = riftSys.riftsById.Values.Where(r => r.Size > 0f).Nearest(r => r.Position.SquareDistanceTo(pos));
+        Rift rift = riftSystem.riftsById.Values.Where(r => r.Size > 0f).Nearest(r => r.Position.SquareDistanceTo(pos));
         if (rift == null) return;
 
         // ignore if outside rift damage radius
@@ -327,6 +324,7 @@ public class EternalStormModSystem : ModSystem
         sapi.Logger.Notification($"World seed set to {newSeed}");
     }
 
+    BlockPos tmpPos = new BlockPos();
     public float GetTemporalStability(float baseStab, double x, double y, double z)
     {
         double dx = x - api.World.DefaultSpawnPosition.X;
@@ -335,8 +333,16 @@ public class EternalStormModSystem : ModSystem
 
         double start = Instance.config.BorderStart;
         double startSq = start * start;
+
+        // inside safe zone
         if (distanceSq <= startSq && y >= api.World.SeaLevel) return 1.5f;
 
+        // check if at story location
+        tmpPos.Set((int)x, (int)y, (int)z);
+        if (storySystem != null && storySystem.GetStoryStructureAt(tmpPos) != null)
+            return 1f;
+
+        // reduce sanity in zone
         double factor = BorderFactor(distanceSq);
         if (factor <= 0.0) return baseStab;
         if (factor >= 1.0) return 0f;
@@ -395,8 +401,8 @@ public class EternalStormModSystem : ModSystem
             sapi.Event.PlayerDeath -= OnPlayerDeath;
         }
 
-        if (riftSys != null)
-            riftSys.OnTrySpawnRift -= OnTrySpawnRift_BlockInsideBorder;
+        if (riftSystem != null)
+            riftSystem.OnTrySpawnRift -= OnTrySpawnRift_BlockInsideBorder;
 
         // Remove temporal stability hook if Start() registered it
         if (api != null)
