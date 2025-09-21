@@ -1,0 +1,71 @@
+[
+    // walk speed removal
+    {
+        "file": "visorhelmets:itemtypes/armor/armor",
+        "op": "replace",
+        "path": "/attributes/statModifiersByType/armor-*-closed/walkSpeed",
+        "value": 0
+    },
+    {
+        "file": "visorhelmets:itemtypes/armor/armor",
+        "op": "replace",
+        "path": "/attributes/statModifiersByType/armor-*-opened/walkSpeed",
+        "value": 0
+    },
+
+    // ranged Weapons Accuracy
+    {
+        "file": "visorhelmets:itemtypes/armor/armor",
+        "op": "replace",
+        "path": "/attributes/statModifiersByType/armor-*-closed/rangedWeaponsAcc",
+        "value": -0.3
+    },
+    {
+        "file": "visorhelmets:itemtypes/armor/armor",
+        "op": "replace",
+        "path": "/attributes/statModifiersByType/armor-*-opened/rangedWeaponsAcc",
+        "value": -0.1
+    },
+
+    // ranged Weapons Charge speed
+    {
+        "file": "visorhelmets:itemtypes/armor/armor",
+        "op": "replace",
+        "path": "/attributes/statModifiersByType/armor-*-closed/rangedWeaponsSpeed",
+        "value": -0.3
+    },
+    {
+        "file": "visorhelmets:itemtypes/armor/armor",
+        "op": "replace",
+        "path": "/attributes/statModifiersByType/armor-*-opened/rangedWeaponsSpeed",
+        "value": -0.1
+    },
+
+    // healing effectivness
+    {
+        "file": "visorhelmets:itemtypes/armor/armor",
+        "op": "replace",
+        "path": "/attributes/statModifiersByType/armor-*-closed/healingeffectivness",
+        "value": -0.2
+    },
+    {
+        "file": "visorhelmets:itemtypes/armor/armor",
+        "op": "replace",
+        "path": "/attributes/statModifiersByType/armor-*-opened/healingeffectivness",
+        "value": -0.1
+    },
+
+    // hunger rate
+    {
+        "file": "visorhelmets:itemtypes/armor/armor",
+        "op": "replace",
+        "path": "/attributes/statModifiersByType/armor-*-closed/hungerrate",
+        "value": 0.3
+    },
+    {
+        "file": "visorhelmets:itemtypes/armor/armor",
+        "op": "replace",
+        "path": "/attributes/statModifiersByType/armor-*-opened/hungerrate",
+        "value": 0.1
+    },
+]

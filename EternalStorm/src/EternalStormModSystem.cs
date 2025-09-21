@@ -163,10 +163,10 @@ public class EternalStormModSystem : ModSystem
 
             // set cap on temperature in storm to -3c
             if (climate.Temperature > -3f)
-                climate.Temperature = -3;
+                climate.Temperature = -3f;
 
             if (climate.WorldGenTemperature > -3f)
-                climate.WorldGenTemperature = -3;
+                climate.WorldGenTemperature = -3f;
         }
     }
 
