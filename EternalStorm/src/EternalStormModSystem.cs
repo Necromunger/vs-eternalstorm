@@ -124,7 +124,8 @@ public class EternalStormModSystem : ModSystem
             enSanity.OwnStability = 1;
 
         // respawning in the storm gives 0 saturation
-        if (!EntityInSafeZone(player.Entity.ServerPos))
+        var spawn = player.GetSpawnPosition(false).AsBlockPos;
+        if (!BlockInSafeZone(spawn))
             hunger.Saturation = 0;
 
         player.Entity?.WatchedAttributes.MarkAllDirty();
