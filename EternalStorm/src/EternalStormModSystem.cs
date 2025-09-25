@@ -52,9 +52,6 @@ public class EternalStormModSystem : ModSystem
             sysStability.OnGetTemporalStability -= GetTemporalStability;
             sysStability.OnGetTemporalStability += GetTemporalStability;
         }, 0);
-
-        api.Event.OnGetClimate += OnGetClimate;
-        api.Event.OnGetWindSpeed += OnGetWindSpeed;
     }
 
     public override void StartClientSide(ICoreClientAPI capi)
@@ -63,6 +60,9 @@ public class EternalStormModSystem : ModSystem
 
         var mapManager = capi.ModLoader.GetModSystem<WorldMapManager>();
         mapManager.RegisterMapLayer<StormMapLayer>("Stormwall", 1.0);
+
+        api.Event.OnGetClimate += OnGetClimate;
+        api.Event.OnGetWindSpeed += OnGetWindSpeed;
     }
 
     public override void StartServerSide(ICoreServerAPI api)
@@ -86,6 +86,9 @@ public class EternalStormModSystem : ModSystem
 
         // Server update loop
         sapi.Event.RegisterGameTickListener(ServerUpdate, 1000);
+
+        api.Event.OnGetClimate += OnGetClimate;
+        api.Event.OnGetWindSpeed += OnGetWindSpeed;
     }
 
     private void OnTrySpawnRift_BlockInsideBorder(BlockPos pos, ref EnumHandling handling)
