@@ -23,6 +23,8 @@ public class EternalStormModSystem : ModSystem
     private ModSystemRifts riftSystem;
     private StoryStructuresSpawnConditions storySystem;
 
+    private float stormSanityProtection = 0.3f;
+
     internal EternalStormModConfig config;
 
     public override void Start(ICoreAPI api)
@@ -82,7 +84,6 @@ public class EternalStormModSystem : ModSystem
             riftSystem.OnTrySpawnRift += OnTrySpawnRift_BlockInsideBorder;
 
         sapi.Event.PlayerJoin += OnPlayerJoin;
-        sapi.Event.PlayerRespawn += OnPlayerRespawn;
         sapi.Event.PlayerDeath += OnPlayerDeath;
 
         // Server update loop
@@ -115,11 +116,6 @@ public class EternalStormModSystem : ModSystem
             hunger.MaxSaturation = config.PlayerMaxSaturation;
             player.Entity?.WatchedAttributes.MarkPathDirty("hunger");
         }
-    }
-
-    private void OnPlayerRespawn(IServerPlayer player)
-    {
-
     }
 
     private void OnPlayerDeath(IServerPlayer deadPlayer, DamageSource dmg)
@@ -208,6 +204,13 @@ public class EternalStormModSystem : ModSystem
 
         double reduction = Instance.config.BorderSanityPerSecond * factor * delta;
         if (reduction <= 0) return;
+
+        var age = player.Entity.GetBehavior<EntityBehaviorPlayerAge>();
+        if (age != null)
+        {
+            var final = stormSanityProtection * age.BuffMagnitude;
+            reduction -= reduction * final;
+        }
 
         double newStability = stab.OwnStability - reduction;
         if (newStability < 0.0) newStability = 0.0;
@@ -389,7 +392,6 @@ public class EternalStormModSystem : ModSystem
     {
         if (sapi != null)
         {
-            sapi.Event.PlayerRespawn -= OnPlayerRespawn;
             sapi.Event.PlayerDeath -= OnPlayerDeath;
         }
 
