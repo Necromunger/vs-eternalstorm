@@ -1,5 +1,4 @@
-﻿using EternalStorm.Behaviors;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Linq;
 using Vintagestory.API.Client;
@@ -9,6 +8,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
+using EternalStorm.Behaviors;
 
 namespace EternalStorm;
 
@@ -35,6 +35,7 @@ public class EternalStormModSystem : ModSystem
         if (config.BorderEnd <= config.BorderStart)
             config.BorderEnd = config.BorderStart + 1;
 
+        api.RegisterEntityBehaviorClass("playerage", typeof(EntityBehaviorPlayerAge));
         api.RegisterCollectibleBehaviorClass("BehaviorNamedSkull", typeof(BehaviorNamedSkull));
 
         harmony = new Harmony(Mod.Info.ModID);
@@ -118,20 +119,7 @@ public class EternalStormModSystem : ModSystem
 
     private void OnPlayerRespawn(IServerPlayer player)
     {
-        var hunger = player.Entity?.GetBehavior<EntityBehaviorHunger>();
-        if (hunger != null)
-            hunger.Saturation = hunger.MaxSaturation;
 
-        var enSanity = player.Entity?.GetBehavior<EntityBehaviorTemporalStabilityAffected>();
-        if (enSanity != null)
-            enSanity.OwnStability = 1;
-
-        // respawning in the storm gives 0 saturation
-        var spawn = player.GetSpawnPosition(false).AsBlockPos;
-        if (!BlockInSafeZone(spawn))
-            hunger.Saturation = 0;
-
-        player.Entity?.WatchedAttributes.MarkAllDirty();
     }
 
     private void OnPlayerDeath(IServerPlayer deadPlayer, DamageSource dmg)
